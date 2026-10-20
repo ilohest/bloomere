@@ -1,0 +1,914 @@
+{%- liquid
+  assign hero_height = '66.67svh'
+  case section.settings.section_height
+    when 'use_screen_full'
+      assign hero_height = '100svh'
+    when 'use_screen_three_quarters'
+      assign hero_height = '75svh'
+    when 'use_screen_one_half'
+      assign hero_height = '50svh'
+    when 'use_screen_one_third'
+      assign hero_height = '33.33svh'
+    when 'use_screen_one_fifth'
+      assign hero_height = '20svh'
+    when 'use_pixels_800'
+      assign hero_height = '800px'
+    when 'use_pixels_650'
+      assign hero_height = '650px'
+    when 'use_pixels_500'
+      assign hero_height = '500px'
+    when 'use_image'
+      assign hero_height = 'auto'
+  endcase
+-%}
+{{ 'bloomere-columns-slideshow.css' | asset_url | stylesheet_tag }}
+<script src="{{ 'bloomere-hero.js' | asset_url }}" defer></script>
+<bloomere-hero class="bh bc flickity-badge-dots{% if hero_height == 'auto' %} bc--image-height{% endif %}" data-autoplay="{{ section.settings.autoplay }}" data-interval="{{ section.settings.autoplay_speed | times: 1000 }}" data-editor="{{ request.design_mode }}" role="region" aria-roledescription="carousel" aria-label="Featured stories"
+ style="--bh-height: {{ hero_height }}; --bh-mobile: {{ section.settings.mobile_height }}px;">
+  <div class="bh__slides">
+  {% for block in section.blocks %}
+    {%- liquid
+      assign count = block.settings.columns | plus: 0
+      assign loading = 'lazy'
+      assign priority = 'auto'
+      if forloop.first and section.settings.priority
+        assign loading = 'eager'
+        assign priority = 'high'
+      endif
+      assign tracks = 'minmax(0, 1fr)'
+      if count == 2
+        assign tracks = block.settings.left_width | append: '% minmax(0, 1fr)'
+      elsif count == 3
+        case block.settings.thirds
+          when 'left'
+            assign tracks = 'minmax(0, 2fr) minmax(0, 1fr) minmax(0, 1fr)'
+          when 'center'
+            assign tracks = 'minmax(0, 1fr) minmax(0, 2fr) minmax(0, 1fr)'
+          when 'right'
+            assign tracks = 'minmax(0, 1fr) minmax(0, 1fr) minmax(0, 2fr)'
+          else
+            assign tracks = 'repeat(3, minmax(0, 1fr))'
+        endcase
+      endif
+    -%}
+    <article class="bh__slide" data-bh-slide data-block-id="{{ block.id }}" id="bh-{{ section.id }}-{{ block.id }}" role="group" aria-roledescription="slide" aria-label="{{ forloop.index }} / {{ section.blocks.size }}" {{ block.shopify_attributes }} style="--bc-tracks: {{ tracks }};">
+    {% for column in (1..count) %}
+      {%- liquid
+        assign prefix = 'c' | append: column | append: '_'
+        assign key = prefix | append: 'background'
+        assign background = block.settings[key]
+        assign key = prefix | append: 'image'
+        assign img = block.settings[key]
+        assign mobile = img
+        if block.settings.custom_mobile
+          assign key = prefix | append: 'mobile'
+          assign mobile = block.settings[key] | default: img
+        endif
+        assign key = prefix | append: 'palette'
+        assign palette = block.settings[key]
+        assign key = prefix | append: 'content'
+        assign enabled = block.settings[key]
+        assign key = prefix | append: 'eyebrow'
+        assign eyebrow = block.settings[key]
+        assign key = prefix | append: 'title'
+        assign title = block.settings[key]
+        assign key = prefix | append: 'text'
+        assign text = block.settings[key]
+        assign key = prefix | append: 'button_label'
+        assign button_label = block.settings[key]
+        assign key = prefix | append: 'button_url'
+        assign button_url = block.settings[key]
+        assign key = prefix | append: 'align'
+        assign align = block.settings[key]
+        assign key = prefix | append: 'vertical'
+        assign vertical = block.settings[key]
+        assign key = prefix | append: 'ink'
+        assign ink = block.settings[key]
+        assign key = prefix | append: 'button_color'
+        assign button_color = block.settings[key] | default: 'btn--neutral'
+        assign key = prefix | append: 'shade'
+        assign shade = block.settings[key]
+        assign has_button = false
+        if button_label != blank and button_url != blank
+          assign has_button = true
+        endif
+        assign has_content = false
+        if enabled
+          if eyebrow != blank or title != blank or text != blank or has_button
+            assign has_content = true
+          endif
+        endif
+      -%}
+      <div class="bh__column {% if background == 'solid' %}bh__panel {{ palette }}{% else %}bh__media{% endif %}" style="--bc-ratio: {{ img.aspect_ratio | default: 1.5 }}; --bh-align: {{ align }}; --bh-vertical: {{ vertical }}; --bh-ink: {{ ink }}; --bh-shade: {{ shade | times: 0.01 }};">
+        {% if background == 'image' %}
+          <picture class="bh__picture" style="--bh-focal: {{ img.presentation.focal_point | default: '50% 50%' }}; --bh-focal-mobile: {{ mobile.presentation.focal_point | default: '50% 50%' }};">
+            {% if block.settings.custom_mobile and mobile != blank %}<source media="(max-width: 749px)" srcset="{{ mobile | image_url: width: 900 }}">{% endif %}
+            {% if img != blank %}
+              {{ img | image_url: width: 2400 | image_tag: widths: '400, 600, 900, 1200, 1600, 2000, 2400', sizes: '100vw', loading: loading, fetchpriority: priority, class: 'bh__image' }}
+            {% else %}{{ 'lifestyle-1' | placeholder_svg_tag: 'bh__placeholder' }}{% endif %}
+          </picture>
+          {%- assign priority = 'auto' -%}
+          {% if has_content %}<div class="bh__shade" aria-hidden="true"></div>{% endif %}
+        {% endif %}
+        {% if has_content %}
+          <div class="bh__content"><div class="bh__copy text-{{ align }}">
+            {% if eyebrow != blank %}<p class="bh__eyebrow hero__kicker">{{ eyebrow | escape }}</p>{% endif %}
+            {% if title != blank %}<h2 class="bh__title hero__title heading-size-9">{{ title | escape }}</h2>{% endif %}
+            {% if text != blank %}<div class="bh__text hero__description rte body-size-6">{{ text }}</div>{% endif %}
+            {% if has_button %}<div class="hero__cta__wrapper"><a class="{{ button_color }} {{ block.settings.button_style }} hero__btn btn--long" href="{{ button_url }}">{{ button_label | escape }}</a></div>{% endif %}
+          </div></div>
+        {% endif %}
+      </div>
+    {% endfor %}
+    </article>
+  {% endfor %}
+  </div>
+  {% if section.blocks.size > 1 %}
+    <nav class="bh__navigation" aria-label="Slideshow controls" hidden>
+      <div class="flickity-page-dots">
+        {% if section.settings.autoplay %}<button type="button" class="bc__rotation" data-bh-toggle aria-label="Pause slideshow">Ⅱ</button>{% endif %}
+        {% for block in section.blocks %}<button class="flickity-page-dot{% if forloop.first %} is-selected{% endif %}" type="button" data-bh-go="{{ forloop.index0 }}" aria-controls="bh-{{ section.id }}-{{ block.id }}" aria-label="Show slide {{ forloop.index }}"{% if forloop.first %} aria-current="true"{% endif %}></button>{% endfor %}
+      </div>
+    </nav>
+    <p class="bh__sr" data-bh-status aria-live="polite" aria-atomic="true"></p>
+  {% endif %}
+</bloomere-hero>
+
+{% schema %}
+{
+  "name": "Bloomere slideshow",
+  "tag": "section",
+  "max_blocks": 8,
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "autoplay",
+      "label": "Auto-rotate slides",
+      "default": false
+    },
+    {
+      "type": "range",
+      "id": "autoplay_speed",
+      "min": 1,
+      "max": 15,
+      "step": 1,
+      "unit": "sec",
+      "label": "Change slides every",
+      "default": 8
+    },
+    {
+      "type": "checkbox",
+      "id": "priority",
+      "label": "Prioritize first image load",
+      "default": false,
+      "info": "Prioritize loading the first image of the slideshow before all other images on the page. Helpful when this section is first on a page, harmful when this section is below other image sections."
+    },
+    {
+      "type": "select",
+      "id": "section_height",
+      "label": "Section height",
+      "default": "use_screen_two_thirds",
+      "options": [
+        {
+          "value": "use_screen_full",
+          "label": "Full screen height"
+        },
+        {
+          "value": "use_screen_three_quarters",
+          "label": "Three quarters of screen height"
+        },
+        {
+          "value": "use_screen_two_thirds",
+          "label": "Two thirds of screen height"
+        },
+        {
+          "value": "use_screen_one_half",
+          "label": "One half of screen height"
+        },
+        {
+          "value": "use_screen_one_third",
+          "label": "One third of screen height"
+        },
+        {
+          "value": "use_screen_one_fifth",
+          "label": "One fifth of screen height"
+        },
+        {
+          "value": "use_pixels_800",
+          "label": "800px"
+        },
+        {
+          "value": "use_pixels_650",
+          "label": "650px"
+        },
+        {
+          "value": "use_pixels_500",
+          "label": "500px"
+        },
+        {
+          "value": "use_image",
+          "label": "Image height"
+        }
+      ]
+    },
+    {
+      "type": "range",
+      "id": "mobile_height",
+      "label": "Mobile image height",
+      "min": 240,
+      "max": 600,
+      "step": 20,
+      "default": 360,
+      "unit": "px"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "slide",
+      "name": "Slide",
+      "settings": [
+        {
+          "type": "select",
+          "id": "columns",
+          "label": "Number of columns",
+          "default": "1",
+          "options": [
+            {
+              "value": "1",
+              "label": "1 column"
+            },
+            {
+              "value": "2",
+              "label": "2 columns"
+            },
+            {
+              "value": "3",
+              "label": "3 columns"
+            }
+          ]
+        },
+        {
+          "type": "range",
+          "id": "left_width",
+          "label": "Column 1 width",
+          "min": 30,
+          "max": 70,
+          "step": 5,
+          "unit": "%",
+          "default": 50,
+          "visible_if": "{{ block.settings.columns == '2' }}"
+        },
+        {
+          "type": "select",
+          "id": "thirds",
+          "label": "Three-column layout",
+          "default": "equal",
+          "options": [
+            {
+              "value": "equal",
+              "label": "Equal widths"
+            },
+            {
+              "value": "left",
+              "label": "50 / 25 / 25"
+            },
+            {
+              "value": "center",
+              "label": "25 / 50 / 25"
+            },
+            {
+              "value": "right",
+              "label": "25 / 25 / 50"
+            }
+          ],
+          "visible_if": "{{ block.settings.columns == '3' }}"
+        },
+        {
+          "type": "checkbox",
+          "id": "custom_mobile",
+          "label": "Use different images on mobile",
+          "default": false
+        },
+        {
+          "type": "select",
+          "id": "button_style",
+          "label": "Button style",
+          "default": "btn--outline",
+          "options": [
+            {
+              "value": "btn",
+              "label": "Solid button"
+            },
+            {
+              "value": "btn--soft",
+              "label": "Soft button"
+            },
+            {
+              "value": "btn--outline",
+              "label": "Outlined button"
+            }
+          ],
+          "info": "Applies to all CTA buttons in this slide."
+        },
+        {
+          "type": "header",
+          "content": "Column 1"
+        },
+        {
+          "type": "select",
+          "id": "c1_background",
+          "label": "Background",
+          "default": "image",
+          "options": [
+            {
+              "value": "image",
+              "label": "Image"
+            },
+            {
+              "value": "solid",
+              "label": "Solid color"
+            }
+          ]
+        },
+        {
+          "type": "image_picker",
+          "id": "c1_image",
+          "label": "Image",
+          "visible_if": "{{ block.settings.c1_background == 'image' }}"
+        },
+        {
+          "type": "image_picker",
+          "id": "c1_mobile",
+          "label": "Mobile image",
+          "info": "Optional. Uses the main image when left empty.",
+          "visible_if": "{{ block.settings.c1_background == 'image' and block.settings.custom_mobile }}"
+        },
+        {
+          "type": "select",
+          "id": "c1_palette",
+          "label": "Background and text palette",
+          "options": [
+            {
+              "value": "palette--light bg--neutral",
+              "label": "Default"
+            },
+            {
+              "value": "palette--light bg--accent",
+              "label": "Light"
+            },
+            {
+              "value": "palette--dark bg--invert",
+              "label": "Dark"
+            },
+            {
+              "value": "palette--dark bg--invert--accent",
+              "label": "Dark accent"
+            },
+            {
+              "value": "palette--bright bg--bright",
+              "label": "Bright"
+            },
+            {
+              "value": "palette--bright bg--bright--accent",
+              "label": "Bright accent"
+            }
+          ],
+          "default": "palette--light bg--neutral",
+          "visible_if": "{{ block.settings.c1_background == 'solid' }}"
+        },
+        {
+          "type": "checkbox",
+          "id": "c1_content",
+          "label": "Add text or a button",
+          "default": true
+        },
+        {
+          "type": "text",
+          "id": "c1_eyebrow",
+          "label": "Kicker",
+          "visible_if": "{{ block.settings.c1_content }}"
+        },
+        {
+          "type": "text",
+          "id": "c1_title",
+          "label": "Heading",
+          "visible_if": "{{ block.settings.c1_content }}"
+        },
+        {
+          "type": "richtext",
+          "id": "c1_text",
+          "label": "Text",
+          "visible_if": "{{ block.settings.c1_content }}"
+        },
+        {
+          "type": "text",
+          "id": "c1_button_label",
+          "label": "Button label",
+          "visible_if": "{{ block.settings.c1_content }}"
+        },
+        {
+          "type": "url",
+          "id": "c1_button_url",
+          "label": "Button link",
+          "visible_if": "{{ block.settings.c1_content }}"
+        },
+        {
+          "type": "select",
+          "id": "c1_button_color",
+          "label": "Button color",
+          "default": "btn--neutral",
+          "options": [
+            {
+              "value": "btn--primary",
+              "label": "Bright accent"
+            },
+            {
+              "value": "btn--secondary",
+              "label": "Secondary accent"
+            },
+            {
+              "value": "btn--neutral",
+              "label": "Text color"
+            },
+            {
+              "value": "btn--black",
+              "label": "Black"
+            },
+            {
+              "value": "btn--white",
+              "label": "White"
+            }
+          ],
+          "visible_if": "{{ block.settings.c1_content }}"
+        },
+        {
+          "type": "select",
+          "id": "c1_align",
+          "label": "Horizontal alignment",
+          "default": "center",
+          "options": [
+            {
+              "value": "left",
+              "label": "Left"
+            },
+            {
+              "value": "center",
+              "label": "Center"
+            },
+            {
+              "value": "right",
+              "label": "Right"
+            }
+          ],
+          "visible_if": "{{ block.settings.c1_content }}"
+        },
+        {
+          "type": "select",
+          "id": "c1_vertical",
+          "label": "Vertical alignment",
+          "default": "center",
+          "options": [
+            {
+              "value": "start",
+              "label": "Top"
+            },
+            {
+              "value": "center",
+              "label": "Middle"
+            },
+            {
+              "value": "end",
+              "label": "Bottom"
+            }
+          ],
+          "visible_if": "{{ block.settings.c1_content }}"
+        },
+        {
+          "type": "color",
+          "id": "c1_ink",
+          "label": "Text color over image",
+          "default": "#ffffff",
+          "visible_if": "{{ block.settings.c1_background == 'image' and block.settings.c1_content }}"
+        },
+        {
+          "type": "range",
+          "id": "c1_shade",
+          "label": "Image overlay opacity",
+          "min": 0,
+          "max": 70,
+          "step": 5,
+          "unit": "%",
+          "default": 20,
+          "visible_if": "{{ block.settings.c1_background == 'image' and block.settings.c1_content }}"
+        },
+        {
+          "type": "header",
+          "content": "Column 2",
+          "visible_if": "{{ block.settings.columns != '1' }}"
+        },
+        {
+          "type": "select",
+          "id": "c2_background",
+          "label": "Background",
+          "default": "image",
+          "options": [
+            {
+              "value": "image",
+              "label": "Image"
+            },
+            {
+              "value": "solid",
+              "label": "Solid color"
+            }
+          ],
+          "visible_if": "{{ block.settings.columns != '1' }}"
+        },
+        {
+          "type": "image_picker",
+          "id": "c2_image",
+          "label": "Image",
+          "visible_if": "{{ block.settings.columns != '1' and block.settings.c2_background == 'image' }}"
+        },
+        {
+          "type": "image_picker",
+          "id": "c2_mobile",
+          "label": "Mobile image",
+          "info": "Optional. Uses the main image when left empty.",
+          "visible_if": "{{ block.settings.columns != '1' and block.settings.c2_background == 'image' and block.settings.custom_mobile }}"
+        },
+        {
+          "type": "select",
+          "id": "c2_palette",
+          "label": "Background and text palette",
+          "options": [
+            {
+              "value": "palette--light bg--neutral",
+              "label": "Default"
+            },
+            {
+              "value": "palette--light bg--accent",
+              "label": "Light"
+            },
+            {
+              "value": "palette--dark bg--invert",
+              "label": "Dark"
+            },
+            {
+              "value": "palette--dark bg--invert--accent",
+              "label": "Dark accent"
+            },
+            {
+              "value": "palette--bright bg--bright",
+              "label": "Bright"
+            },
+            {
+              "value": "palette--bright bg--bright--accent",
+              "label": "Bright accent"
+            }
+          ],
+          "default": "palette--light bg--neutral",
+          "visible_if": "{{ block.settings.columns != '1' and block.settings.c2_background == 'solid' }}"
+        },
+        {
+          "type": "checkbox",
+          "id": "c2_content",
+          "label": "Add text or a button",
+          "default": false,
+          "visible_if": "{{ block.settings.columns != '1' }}"
+        },
+        {
+          "type": "text",
+          "id": "c2_eyebrow",
+          "label": "Kicker",
+          "visible_if": "{{ block.settings.columns != '1' and block.settings.c2_content }}"
+        },
+        {
+          "type": "text",
+          "id": "c2_title",
+          "label": "Heading",
+          "visible_if": "{{ block.settings.columns != '1' and block.settings.c2_content }}"
+        },
+        {
+          "type": "richtext",
+          "id": "c2_text",
+          "label": "Text",
+          "visible_if": "{{ block.settings.columns != '1' and block.settings.c2_content }}"
+        },
+        {
+          "type": "text",
+          "id": "c2_button_label",
+          "label": "Button label",
+          "visible_if": "{{ block.settings.columns != '1' and block.settings.c2_content }}"
+        },
+        {
+          "type": "url",
+          "id": "c2_button_url",
+          "label": "Button link",
+          "visible_if": "{{ block.settings.columns != '1' and block.settings.c2_content }}"
+        },
+        {
+          "type": "select",
+          "id": "c2_button_color",
+          "label": "Button color",
+          "default": "btn--neutral",
+          "options": [
+            {
+              "value": "btn--primary",
+              "label": "Bright accent"
+            },
+            {
+              "value": "btn--secondary",
+              "label": "Secondary accent"
+            },
+            {
+              "value": "btn--neutral",
+              "label": "Text color"
+            },
+            {
+              "value": "btn--black",
+              "label": "Black"
+            },
+            {
+              "value": "btn--white",
+              "label": "White"
+            }
+          ],
+          "visible_if": "{{ block.settings.columns != '1' and block.settings.c2_content }}"
+        },
+        {
+          "type": "select",
+          "id": "c2_align",
+          "label": "Horizontal alignment",
+          "default": "center",
+          "options": [
+            {
+              "value": "left",
+              "label": "Left"
+            },
+            {
+              "value": "center",
+              "label": "Center"
+            },
+            {
+              "value": "right",
+              "label": "Right"
+            }
+          ],
+          "visible_if": "{{ block.settings.columns != '1' and block.settings.c2_content }}"
+        },
+        {
+          "type": "select",
+          "id": "c2_vertical",
+          "label": "Vertical alignment",
+          "default": "center",
+          "options": [
+            {
+              "value": "start",
+              "label": "Top"
+            },
+            {
+              "value": "center",
+              "label": "Middle"
+            },
+            {
+              "value": "end",
+              "label": "Bottom"
+            }
+          ],
+          "visible_if": "{{ block.settings.columns != '1' and block.settings.c2_content }}"
+        },
+        {
+          "type": "color",
+          "id": "c2_ink",
+          "label": "Text color over image",
+          "default": "#ffffff",
+          "visible_if": "{{ block.settings.columns != '1' and block.settings.c2_background == 'image' and block.settings.c2_content }}"
+        },
+        {
+          "type": "range",
+          "id": "c2_shade",
+          "label": "Image overlay opacity",
+          "min": 0,
+          "max": 70,
+          "step": 5,
+          "unit": "%",
+          "default": 20,
+          "visible_if": "{{ block.settings.columns != '1' and block.settings.c2_background == 'image' and block.settings.c2_content }}"
+        },
+        {
+          "type": "header",
+          "content": "Column 3",
+          "visible_if": "{{ block.settings.columns == '3' }}"
+        },
+        {
+          "type": "select",
+          "id": "c3_background",
+          "label": "Background",
+          "default": "image",
+          "options": [
+            {
+              "value": "image",
+              "label": "Image"
+            },
+            {
+              "value": "solid",
+              "label": "Solid color"
+            }
+          ],
+          "visible_if": "{{ block.settings.columns == '3' }}"
+        },
+        {
+          "type": "image_picker",
+          "id": "c3_image",
+          "label": "Image",
+          "visible_if": "{{ block.settings.columns == '3' and block.settings.c3_background == 'image' }}"
+        },
+        {
+          "type": "image_picker",
+          "id": "c3_mobile",
+          "label": "Mobile image",
+          "info": "Optional. Uses the main image when left empty.",
+          "visible_if": "{{ block.settings.columns == '3' and block.settings.c3_background == 'image' and block.settings.custom_mobile }}"
+        },
+        {
+          "type": "select",
+          "id": "c3_palette",
+          "label": "Background and text palette",
+          "options": [
+            {
+              "value": "palette--light bg--neutral",
+              "label": "Default"
+            },
+            {
+              "value": "palette--light bg--accent",
+              "label": "Light"
+            },
+            {
+              "value": "palette--dark bg--invert",
+              "label": "Dark"
+            },
+            {
+              "value": "palette--dark bg--invert--accent",
+              "label": "Dark accent"
+            },
+            {
+              "value": "palette--bright bg--bright",
+              "label": "Bright"
+            },
+            {
+              "value": "palette--bright bg--bright--accent",
+              "label": "Bright accent"
+            }
+          ],
+          "default": "palette--light bg--neutral",
+          "visible_if": "{{ block.settings.columns == '3' and block.settings.c3_background == 'solid' }}"
+        },
+        {
+          "type": "checkbox",
+          "id": "c3_content",
+          "label": "Add text or a button",
+          "default": false,
+          "visible_if": "{{ block.settings.columns == '3' }}"
+        },
+        {
+          "type": "text",
+          "id": "c3_eyebrow",
+          "label": "Kicker",
+          "visible_if": "{{ block.settings.columns == '3' and block.settings.c3_content }}"
+        },
+        {
+          "type": "text",
+          "id": "c3_title",
+          "label": "Heading",
+          "visible_if": "{{ block.settings.columns == '3' and block.settings.c3_content }}"
+        },
+        {
+          "type": "richtext",
+          "id": "c3_text",
+          "label": "Text",
+          "visible_if": "{{ block.settings.columns == '3' and block.settings.c3_content }}"
+        },
+        {
+          "type": "text",
+          "id": "c3_button_label",
+          "label": "Button label",
+          "visible_if": "{{ block.settings.columns == '3' and block.settings.c3_content }}"
+        },
+        {
+          "type": "url",
+          "id": "c3_button_url",
+          "label": "Button link",
+          "visible_if": "{{ block.settings.columns == '3' and block.settings.c3_content }}"
+        },
+        {
+          "type": "select",
+          "id": "c3_button_color",
+          "label": "Button color",
+          "default": "btn--neutral",
+          "options": [
+            {
+              "value": "btn--primary",
+              "label": "Bright accent"
+            },
+            {
+              "value": "btn--secondary",
+              "label": "Secondary accent"
+            },
+            {
+              "value": "btn--neutral",
+              "label": "Text color"
+            },
+            {
+              "value": "btn--black",
+              "label": "Black"
+            },
+            {
+              "value": "btn--white",
+              "label": "White"
+            }
+          ],
+          "visible_if": "{{ block.settings.columns == '3' and block.settings.c3_content }}"
+        },
+        {
+          "type": "select",
+          "id": "c3_align",
+          "label": "Horizontal alignment",
+          "default": "center",
+          "options": [
+            {
+              "value": "left",
+              "label": "Left"
+            },
+            {
+              "value": "center",
+              "label": "Center"
+            },
+            {
+              "value": "right",
+              "label": "Right"
+            }
+          ],
+          "visible_if": "{{ block.settings.columns == '3' and block.settings.c3_content }}"
+        },
+        {
+          "type": "select",
+          "id": "c3_vertical",
+          "label": "Vertical alignment",
+          "default": "center",
+          "options": [
+            {
+              "value": "start",
+              "label": "Top"
+            },
+            {
+              "value": "center",
+              "label": "Middle"
+            },
+            {
+              "value": "end",
+              "label": "Bottom"
+            }
+          ],
+          "visible_if": "{{ block.settings.columns == '3' and block.settings.c3_content }}"
+        },
+        {
+          "type": "color",
+          "id": "c3_ink",
+          "label": "Text color over image",
+          "default": "#ffffff",
+          "visible_if": "{{ block.settings.columns == '3' and block.settings.c3_background == 'image' and block.settings.c3_content }}"
+        },
+        {
+          "type": "range",
+          "id": "c3_shade",
+          "label": "Image overlay opacity",
+          "min": 0,
+          "max": 70,
+          "step": 5,
+          "unit": "%",
+          "default": 20,
+          "visible_if": "{{ block.settings.columns == '3' and block.settings.c3_background == 'image' and block.settings.c3_content }}"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Bloomere slideshow",
+      "blocks": [
+        {
+          "type": "slide"
+        }
+      ]
+    }
+  ],
+  "disabled_on": {
+    "groups": [
+      "header",
+      "footer",
+      "aside"
+    ]
+  },
+  "class": "bloomere-hero-section"
+}
+{% endschema %}

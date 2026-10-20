@@ -1,0 +1,175 @@
+<!-- /sections/section-newsletter.liquid -->
+<style>
+  #shopify-section-{{ section.id }} .bloomere-newsletter__panel {
+    width: 100%;
+    max-width: 760px;
+    margin-inline: auto;
+    padding: clamp(28px, 5vw, 64px);
+    box-sizing: border-box;
+    border: 0;
+    border-radius: 0;
+  }
+  #shopify-section-{{ section.id }} .bloomere-newsletter__panel .rte {
+    max-width: 560px;
+    margin-inline: auto;
+  }
+  #shopify-section-{{ section.id }} .bloomere-newsletter__panel .newsletter__contain {
+    max-width: 520px;
+    margin-inline: auto;
+  }
+  @media (max-width: 749px) {
+    #shopify-section-{{ section.id }} .bloomere-newsletter__panel {
+      padding: 28px 20px;
+    }
+  }
+</style>
+
+<div class="section-newsletter {{ section.settings.bg }} bloomere-background"
+  style="--PT: {{ section.settings.padding_top }}px; --PB: {{ section.settings.padding_bottom }}px;">
+  {% render 'bloomere-background', section: section %}
+  <div class="{{ section.settings.width }} section-padding bloomere-background__content">
+    <div class="bloomere-newsletter__panel {{ section.settings.bg }} text-center">
+      {% if section.settings.title != '' %}
+        <h2 class="kicker-flourished mb-r11">{{ section.settings.title | escape }}</h2>
+      {% endif %}
+      {% if section.settings.richtext != blank %}
+        <div class="rte body-size-4">{{ section.settings.richtext }}</div>
+      {% endif %}
+      <div class="newsletter__contain">
+        {% assign unique = 'section-newsletter' | append: section.id %}
+        {% render 'newsletter-form', unique: unique %}
+      </div>
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Newsletter",
+  "settings": [
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Title",
+      "default": "Newsletter"
+    },
+    {
+      "id": "richtext",
+      "type": "richtext",
+      "label": "Text",
+      "default": "<p>Join to get special offers, free giveaways, and once-in-a-lifetime deals.</p>"
+    },
+    {
+      "type": "select",
+      "id": "bg",
+      "label": "Background color",
+      "default": "palette--light bg--neutral",
+      "options": [
+        {
+          "value": "palette--light bg--neutral",
+          "label": "Default"
+        },
+        {
+          "value": "palette--light bg--accent",
+          "label": "Light"
+        },
+        {
+          "value": "palette--dark bg--invert",
+          "label": "Dark"
+        },
+        {
+          "value": "palette--dark bg--invert--accent",
+          "label": "Dark accent"
+        },
+        {
+          "value": "palette--bright bg--bright",
+          "label": "Bright"
+        },
+        {
+          "value": "palette--bright bg--bright--accent",
+          "label": "Bright accent"
+        }
+      ]
+    },
+    {
+      "type": "header",
+      "content": "Fond Bloomere"
+    },
+    {
+      "type": "image_picker",
+      "id": "bloomere_pattern_image",
+      "label": "Image du motif"
+    },
+    {
+      "type": "range",
+      "id": "bloomere_tile_width",
+      "label": "Taille du motif",
+      "min": 40,
+      "max": 1000,
+      "step": 10,
+      "unit": "px",
+      "default": 240
+    },
+    {
+      "type": "paragraph",
+      "content": "Subscribers are under 'Accepts Marketing' in your [customer admin](/admin/customers)."
+    },
+    {
+      "type": "header",
+      "content": "Section spacing"
+    },
+    {
+      "type": "select",
+      "id": "width",
+      "label": "Width",
+      "default": "wrapper",
+      "options": [
+        {
+          "value": "wrapper--full",
+          "label": "Full width padded"
+        },
+        {
+          "value": "wrapper",
+          "label": "Page width"
+        },
+        {
+          "value": "wrapper--narrow",
+          "label": "Page width narrow"
+        }
+      ]
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 180,
+      "step": 2,
+      "unit": "px",
+      "label": "Padding top",
+      "default": 36
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 180,
+      "step": 2,
+      "unit": "px",
+      "label": "Padding bottom",
+      "default": 36
+    }
+  ],
+  "presets": [
+    {
+      "name": "Newsletter",
+      "category": "Forms"
+    }
+  ],
+  "disabled_on": {
+    "groups": [
+      "header",
+      "aside"
+    ]
+  }
+}
+{% endschema %}

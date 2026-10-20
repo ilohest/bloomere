@@ -1,0 +1,52 @@
+bloomere-hero.bc { display:block; width:100%; }
+.bc, .bc * { box-sizing:border-box; }
+.bc .bh__slide { display:grid; grid-template-columns:var(--bc-tracks); min-height:var(--bh-height); margin:0; }
+.bc [hidden] { display:none !important; }
+.bc .bh__column { display:flex; position:relative; min-width:0; isolation:isolate; }
+.bc .bh__media { color:var(--bh-ink); --text:var(--bh-ink); --text-dark:var(--bh-ink); --text-light:var(--bh-ink); }
+.bc .bh__picture, .bc .bh__shade { position:absolute; inset:0; width:100%; height:100%; }
+.bc .bh__picture { z-index:-2; overflow:hidden; background:#e9e7df; }
+.bc .bh__image, .bc .bh__placeholder { display:block; width:100%; height:100%; object-fit:cover; object-position:var(--bh-focal); }
+.bc .bh__shade { z-index:-1; background:#000; opacity:var(--bh-shade); pointer-events:none; }
+.bc .bh__content { display:flex; align-items:var(--bh-vertical); justify-content:center; width:100%; padding:clamp(32px,5vw,88px) clamp(24px,4vw,72px); text-align:var(--bh-align); }
+.bc .bh__copy { width:100%; max-width:720px; overflow-wrap:anywhere; }
+.bc button:focus-visible, .bc a:focus-visible { outline:2px solid currentColor; outline-offset:4px; }
+.bc .bh__sr { position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0; }
+@media (max-width:749px) {
+  .bc .bh__slide { min-height:0; grid-template-columns:minmax(0,1fr); }
+  .bc .bh__media { min-height:var(--bh-mobile); }
+  .bc .bh__image { object-position:var(--bh-focal-mobile); }
+  .bc .bh__content { padding:36px 24px; }
+}
+
+.bc .bh__column { min-height:160px; }
+.bc .bh__content { justify-content:var(--bh-align); padding:clamp(24px,3vw,56px); }
+.bc .bh__copy { max-width:720px; }
+@media (max-width:749px) {
+  .bc .bh__media { min-height:var(--bh-mobile); }
+  .bc .bh__content { padding:36px 24px; }
+}
+
+/* Match Pipeline's slideshow CTA classes; leave colors, borders and hover to the theme. */
+.bc .bh__copy { --cta-column-gap: 8px; }
+.bc .hero__btn { max-width:100%; white-space:normal; }
+/* Native Pipeline badge dots, positioned over the bottom-right corner. */
+bloomere-hero.bc { position:relative; }
+.bc .bh__navigation .flickity-page-dots { bottom:var(--outer,20px); right:var(--outer,20px); z-index:5; }
+.bc .bh__navigation .flickity-page-dots::before { content:""; position:absolute; inset:0; background:var(--text); opacity:.5; z-index:0; }
+.bc .bh__navigation .flickity-page-dot { border:0; }
+.bc .bh__navigation .flickity-page-dot:focus-visible { outline:2px solid var(--bg); outline-offset:4px; }
+.bc:has(.bh__navigation) .bh__content { padding-bottom:max(72px, var(--outer,20px)); }
+
+.bc .bc__rotation { position:relative; z-index:5; border:0; background:transparent; color:var(--bg); font-size:14px; line-height:1; padding:0 8px; min-height:20px; cursor:pointer; }
+@media (min-width:750px) {
+  .bc--image-height .bh__media { display:grid; }
+  .bc--image-height .bh__media::before { content:""; grid-area:1 / 1; width:100%; padding-top:calc(100% / var(--bc-ratio,1.5)); }
+  .bc--image-height .bh__media .bh__content { grid-area:1 / 1; }
+}
+
+/* Directional mouse cursors; links and controls retain their normal behavior. */
+@media (hover: hover) and (pointer: fine) {
+  .bc .bh__slides[data-arrow="previous"] { cursor:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2230%22%20height%3D%2236%22%20viewBox%3D%220%200%2044%2044%22%3E%3Cpath%20d%3D%22M10.366%2022.502l.412.392L33.268%2044l.732-.742-22.488-21.106L34%20.742%2033.268%200%2010%2022.152z%22%2F%3E%3C%2Fsvg%3E") 5 11, auto; }
+  .bc .bh__slides[data-arrow="next"] { cursor:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2230%22%20height%3D%2236%22%20viewBox%3D%220%200%2044%2044%22%3E%3Cpath%20d%3D%22M33.634%2022.502l-.412.392L10.732%2044%2010%2043.258l22.488-21.106L10%20.742%2010.732%200%2034%2022.152z%22%2F%3E%3C%2Fsvg%3E") 15 11, auto; }
+}

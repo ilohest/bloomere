@@ -1,0 +1,218 @@
+<!-- /sections/section-bloomere-divider.liquid -->
+{%- liquid
+  assign top_color = settings.color_body_bg
+  case section.settings.top_palette
+    when 'neutral'
+      assign top_color = settings.color_body_bg
+    when 'light'
+      assign top_color = settings.color_bg_light
+    when 'dark'
+      assign top_color = settings.color_bg_inverse
+    when 'dark_accent'
+      assign top_color = settings.color_bg_accent_inverse
+    when 'bright'
+      assign top_color = settings.color_bg_bright
+    when 'bright_accent'
+      assign top_color = settings.color_bg_accent_bright
+  endcase
+  assign bottom_color = settings.color_body_bg
+  case section.settings.bottom_palette
+    when 'neutral'
+      assign bottom_color = settings.color_body_bg
+    when 'light'
+      assign bottom_color = settings.color_bg_light
+    when 'dark'
+      assign bottom_color = settings.color_bg_inverse
+    when 'dark_accent'
+      assign bottom_color = settings.color_bg_accent_inverse
+    when 'bright'
+      assign bottom_color = settings.color_bg_bright
+    when 'bright_accent'
+      assign bottom_color = settings.color_bg_accent_bright
+  endcase
+-%}
+<style>
+  #shopify-section-{{ section.id }} {
+    margin: 0;
+    padding: 0;
+    line-height: 0;
+  }
+  #shopify-section-{{ section.id }} .bloomere-divider {
+    width: 100%;
+    height: {{ section.settings.height_desktop }}px;
+    overflow: hidden;
+    background: {{ bottom_color }};
+  }
+  #shopify-section-{{ section.id }} .bloomere-divider__svg {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+  #shopify-section-{{ section.id }} .bloomere-divider__svg--mobile {
+    display: none;
+  }
+  @media (max-width: 749px) {
+    #shopify-section-{{ section.id }} .bloomere-divider {
+      height: {{ section.settings.height_mobile }}px;
+    }
+    #shopify-section-{{ section.id }} .bloomere-divider__svg--desktop { display: none; }
+    #shopify-section-{{ section.id }} .bloomere-divider__svg--mobile { display: block; }
+  }
+</style>
+<div class="bloomere-divider" aria-hidden="true">
+  <svg class="bloomere-divider__svg bloomere-divider__svg--desktop" viewBox="0 0 1440 100" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg" focusable="false">
+    {%- case section.settings.shape -%}
+      {%- when 'scallops' -%}
+        <defs>
+          <pattern id="bloomere-scallop-{{ section.id }}-desktop" width="120" height="100" patternUnits="userSpaceOnUse">
+            <path d="M0 0 H120 V28 Q60 108 0 28 Z" fill="{{ top_color }}" />
+          </pattern>
+        </defs>
+        <rect width="1440" height="100" fill="url(#bloomere-scallop-{{ section.id }}-desktop)" />
+      {%- when 'paper' -%}
+        <path d="M0 48 C20 21.333 40 21.333 60 48 C80 74.667 100 74.667 120 48 C140 21.333 160 21.333 180 48 C200 74.667 220 74.667 240 48 C260 21.333 280 21.333 300 48 C320 74.667 340 74.667 360 48 C380 21.333 400 21.333 420 48 C440 74.667 460 74.667 480 48 C500 21.333 520 21.333 540 48 C560 74.667 580 74.667 600 48 C620 21.333 640 21.333 660 48 C680 74.667 700 74.667 720 48 C740 21.333 760 21.333 780 48 C800 74.667 820 74.667 840 48 C860 21.333 880 21.333 900 48 C920 74.667 940 74.667 960 48 C980 21.333 1000 21.333 1020 48 C1040 74.667 1060 74.667 1080 48 C1100 21.333 1120 21.333 1140 48 C1160 74.667 1180 74.667 1200 48 C1220 21.333 1240 21.333 1260 48 C1280 74.667 1300 74.667 1320 48 C1340 21.333 1360 21.333 1380 48 C1400 74.667 1420 74.667 1440 48 L1440 0 H0 Z" fill="{{ top_color }}" />
+      {%- else -%}
+        <path d="M0 52 C240 0 480 0 720 52 S1200 104 1440 52 L1440 0 H0 Z" fill="{{ top_color }}" />
+    {%- endcase -%}
+  </svg>
+  <svg class="bloomere-divider__svg bloomere-divider__svg--mobile" viewBox="0 0 480 100" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg" focusable="false">
+    {%- case section.settings.shape -%}
+      {%- when 'scallops' -%}
+        <defs>
+          <pattern id="bloomere-scallop-{{ section.id }}-mobile" width="120" height="100" patternUnits="userSpaceOnUse">
+            <path d="M0 0 H120 V28 Q60 108 0 28 Z" fill="{{ top_color }}" />
+          </pattern>
+        </defs>
+        <rect width="480" height="100" fill="url(#bloomere-scallop-{{ section.id }}-mobile)" />
+      {%- when 'paper' -%}
+        <path d="M0 48 C20 21.333 40 21.333 60 48 C80 74.667 100 74.667 120 48 C140 21.333 160 21.333 180 48 C200 74.667 220 74.667 240 48 C260 21.333 280 21.333 300 48 C320 74.667 340 74.667 360 48 C380 21.333 400 21.333 420 48 C440 74.667 460 74.667 480 48 L480 0 H0 Z" fill="{{ top_color }}" />
+      {%- else -%}
+        <path d="M0 52 C80 0 160 0 240 52 S400 104 480 52 L480 0 H0 Z" fill="{{ top_color }}" />
+    {%- endcase -%}
+  </svg>
+</div>
+{% schema %}
+{
+  "name": "Séparateur Bloomere",
+  "tag": "section",
+  "class": "bloomere-divider-section",
+  "settings": [
+    {
+      "type": "select",
+      "id": "top_palette",
+      "label": "Couleur au-dessus",
+      "options": [
+        {
+          "value": "neutral",
+          "label": "Default"
+        },
+        {
+          "value": "light",
+          "label": "Light"
+        },
+        {
+          "value": "dark",
+          "label": "Dark"
+        },
+        {
+          "value": "dark_accent",
+          "label": "Dark accent"
+        },
+        {
+          "value": "bright",
+          "label": "Bright"
+        },
+        {
+          "value": "bright_accent",
+          "label": "Bright accent"
+        }
+      ],
+      "default": "neutral"
+    },
+    {
+      "type": "select",
+      "id": "bottom_palette",
+      "label": "Couleur en dessous",
+      "options": [
+        {
+          "value": "neutral",
+          "label": "Default"
+        },
+        {
+          "value": "light",
+          "label": "Light"
+        },
+        {
+          "value": "dark",
+          "label": "Dark"
+        },
+        {
+          "value": "dark_accent",
+          "label": "Dark accent"
+        },
+        {
+          "value": "bright",
+          "label": "Bright"
+        },
+        {
+          "value": "bright_accent",
+          "label": "Bright accent"
+        }
+      ],
+      "default": "light"
+    },
+    {
+      "type": "select",
+      "id": "shape",
+      "label": "Forme",
+      "default": "wave",
+      "options": [
+        {
+          "value": "wave",
+          "label": "Grande vague douce"
+        },
+        {
+          "value": "scallops",
+          "label": "Petites vagues festonnées"
+        },
+        {
+          "value": "paper",
+          "label": "Petites vagues régulières"
+        }
+      ]
+    },
+    {
+      "type": "range",
+      "id": "height_desktop",
+      "label": "Hauteur sur ordinateur",
+      "min": 20,
+      "max": 160,
+      "step": 4,
+      "unit": "px",
+      "default": 80
+    },
+    {
+      "type": "range",
+      "id": "height_mobile",
+      "label": "Hauteur sur mobile",
+      "min": 12,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "default": 44
+    }
+  ],
+  "presets": [
+    {
+      "name": "Séparateur Bloomere",
+      "category": "Bloomere"
+    }
+  ],
+  "disabled_on": {
+    "groups": [
+      "header",
+      "aside"
+    ]
+  }
+}
+{% endschema %}

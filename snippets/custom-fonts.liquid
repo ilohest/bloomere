@@ -1,0 +1,64 @@
+<style>
+  @font-face {
+    font-family: "Blooomere Kepler";
+    src: url("https://cdn.shopify.com/s/files/1/0474/4190/3775/files/Kepler_Std_Extended_Display.otf?v=1792449090")
+      format("opentype");
+    font-weight: 300;
+    font-style: normal;
+    font-display: swap;
+  }
+
+  @font-face {
+    font-family: "Blooomere Mulish";
+    src: url("https://cdn.shopify.com/s/files/1/0474/4190/3775/files/Mulish-Regular.ttf?v=1792449084")
+      format("truetype");
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+  }
+
+  :root {
+    /* Paragraphes */
+    --FONT-STACK-BODY: "Blooomere Mulish", sans-serif;
+    --FONT-STYLE-BODY: normal;
+    --FONT-WEIGHT-BODY: 400;
+    --FONT-WEIGHT-BODY-BOLD: 700;
+
+    /* Titres */
+    --FONT-STACK-HEADING: "Blooomere Kepler", Georgia, serif;
+    --FONT-STYLE-HEADING: normal;
+    --FONT-WEIGHT-HEADING: 300;
+    --FONT-WEIGHT-HEADING-BOLD: 300;
+
+    /* Accents */
+    --FONT-STACK-ACCENT: "Blooomere Mulish", sans-serif;
+    --FONT-STYLE-ACCENT: normal;
+    --FONT-WEIGHT-ACCENT: 400;
+    --FONT-WEIGHT-ACCENT-BOLD: 700;
+
+    /* Navigation */
+    --TYPE-STACK-NAV: "Blooomere Mulish", sans-serif;
+    --TYPE-STYLE-NAV: normal;
+    --TYPE-WEIGHT-NAV: 400;
+
+    /* Boutons */
+    --TYPE-STACK-BUTTON: "Blooomere Mulish", sans-serif;
+    --TYPE-STYLE-BUTTON: normal;
+    --TYPE-WEIGHT-BUTTON: 400;
+
+    /* Sous-titres / title kickers */
+    --TYPE-STACK-KICKER: "Blooomere Mulish", sans-serif;
+    --TYPE-STYLE-KICKER: normal;
+    --TYPE-WEIGHT-KICKER: 400;
+  }
+
+  /* Titres des sections best-sellers et newsletter */
+    [id$="__section_collection_slider_hLwQtD"] .kicker-flourished,
+    [id$="__section_newsletter_Yz6jEy"] .kicker-flourished {
+        font-family: var(--FONT-STACK-HEADING);
+        font-weight: var(--FONT-WEIGHT-HEADING);
+        font-style: normal;
+        text-transform: lowercase;
+        letter-spacing: normal;
+    }
+</style>

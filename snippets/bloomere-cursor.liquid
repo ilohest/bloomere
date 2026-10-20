@@ -1,0 +1,29 @@
+{% comment %}
+  Optional desktop cursor. Add once before </head> in layout/theme.liquid.
+  Global settings are supplied in config/settings_schema.json.
+  Use a square transparent image containing a single isolated illustration.
+{% endcomment %}
+{%- if settings.bloomere_cursor_enabled and settings.bloomere_cursor_image != blank -%}
+  {%- assign cursor_url = settings.bloomere_cursor_image | image_url: width: 32, height: 32, crop: 'center' -%}
+  <style>
+    @media (hover: hover) and (pointer: fine) {
+      body {
+        cursor: url("{{ cursor_url }}") 16 16, auto;
+      }
+      a[href], button, summary, select, [role="button"],
+      input[type="button"], input[type="submit"], input[type="reset"],
+      input[type="checkbox"], input[type="radio"], input[type="range"] {
+        cursor: pointer;
+      }
+      textarea, input:not([type]), input[type="text"], input[type="email"],
+      input[type="password"], input[type="search"], input[type="tel"],
+      input[type="url"], input[type="number"], [contenteditable="true"] {
+        cursor: text;
+      }
+      button:disabled, input:disabled, select:disabled, textarea:disabled,
+      [role="button"][aria-disabled="true"] {
+        cursor: not-allowed;
+      }
+    }
+  </style>
+{%- endif -%}

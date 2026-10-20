@@ -1,0 +1,263 @@
+{%- liquid
+  assign popup_kicker = section.settings.kicker
+  if popup_kicker == 'welcome to bloomere'
+    assign popup_kicker = 'Welcome to Bloomere'
+  endif
+  assign popup_title = section.settings.title
+  if popup_title == 'shall we be friends?'
+    assign popup_title = 'Shall we be friends?'
+  endif
+  assign popup_placeholder = section.settings.placeholder
+  if popup_placeholder == 'your email address'
+    assign popup_placeholder = 'Your email address'
+  endif
+  assign popup_dismiss = section.settings.dismiss
+  if popup_dismiss == 'maybe later'
+    assign popup_dismiss = 'Maybe later'
+  endif
+-%}
+{{ 'bloomere-newsletter-popup.css' | asset_url | stylesheet_tag }}
+<script src="{{ 'bloomere-newsletter-popup.js' | asset_url }}" defer></script>
+{%- assign form_id = 'BloomereNewsletter-' | append: section.id -%}
+<bloomere-newsletter-popup data-section-id="{{ section.id }}" data-enabled="{{ section.settings.enabled }}" data-editor="{{ request.design_mode }}" data-delay="{{ section.settings.delay | times: 1000 }}" data-days="{{ section.settings.frequency }}" data-subscribed="{% if customer.accepts_marketing %}true{% else %}false{% endif %}">
+  <dialog class="bnp {{ section.settings.palette }}" aria-labelledby="{{ form_id }}-title">
+    <div class="bnp__inner">
+      <span class="bnp__handle" aria-hidden="true"></span>
+      <button class="bnp__close" type="button" data-bnp-close aria-label="Close newsletter popup" autofocus><svg width="20" height="20" viewBox="0 0 20 20" aria-hidden="true"><path d="m4 4 12 12M16 4 4 16" fill="none" stroke="currentColor" stroke-width="1.5"/></svg></button>
+      <header class="bnp__heading">
+        {% if section.settings.kicker != blank %}<p class="bnp__kicker {{ section.settings.kicker_color }}">{{ popup_kicker | escape }}</p>{% endif %}
+        <h2 id="{{ form_id }}-title" class="bnp__title">{{ popup_title | escape }}</h2>
+        {% if section.settings.text != blank %}<div class="bnp__description rte">{{ section.settings.text }}</div>{% endif %}
+      </header>
+      {% if section.settings.image != blank %}
+        <div class="bnp__art">{{ section.settings.image | image_url: width: 640 | image_tag: widths: '240, 400, 640', sizes: '240px', alt: '', loading: 'lazy' }}</div>
+      {% endif %}
+      <div class="bnp__signup">
+        {% form 'customer', id: form_id, class: 'bnp__form' %}
+          <input type="hidden" name="contact[tags]" value="newsletter,bloomere-popup">
+          {% if form.posted_successfully? %}
+            <div class="bnp__message" data-bnp-result="success" role="status" tabindex="-1">{{ section.settings.success | escape }}</div>
+          {% else %}
+            {% if form.errors %}<div class="bnp__message bnp__error" id="{{ form_id }}-error" data-bnp-result="error" role="alert" tabindex="-1">{{ form.errors | default_errors }}</div>{% endif %}
+            <label class="bnp__sr" for="{{ form_id }}-email">Email address</label>
+            <input id="{{ form_id }}-email" class="bnp__email" type="email" name="contact[email]" value="{{ form.email | escape }}" placeholder="{{ popup_placeholder | escape }}" autocomplete="email" autocorrect="off" autocapitalize="off" required {% if form.errors %}aria-invalid="true" aria-describedby="{{ form_id }}-error"{% endif %}>
+            <button class="bnp__submit btn {{ section.settings.button_color }}" type="submit">{{ section.settings.button | escape }}</button>
+          {% endif %}
+        {% endform %}
+        <button type="button" class="bnp__later" data-bnp-close>{{ popup_dismiss | escape }}</button>
+        <div class="bnp__consent">{{ section.settings.consent }}{% if shop.privacy_policy != blank %} <a href="{{ shop.privacy_policy.url }}">Privacy policy</a>{% endif %}</div>
+      </div>
+    </div>
+  </dialog>
+</bloomere-newsletter-popup>
+
+{% schema %}
+{
+  "name": "Bloomere newsletter popup",
+  "tag": "section",
+  "limit": 1,
+  "enabled_on": {
+    "groups": [
+      "aside"
+    ]
+  },
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "enabled",
+      "label": "Enable popup",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "Content"
+    },
+    {
+      "type": "text",
+      "id": "kicker",
+      "label": "Kicker",
+      "default": "Welcome to Bloomere"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Heading",
+      "default": "Shall we be friends?"
+    },
+    {
+      "type": "richtext",
+      "id": "text",
+      "label": "Text",
+      "default": "<p>Join the Bloomere family<br>and enjoy <strong>10% off</strong> your first order.</p>"
+    },
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "Illustration",
+      "info": "Use a transparent PNG or WebP. Shown below the text on desktop and above it on mobile."
+    },
+    {
+      "type": "header",
+      "content": "Newsletter form"
+    },
+    {
+      "type": "text",
+      "id": "placeholder",
+      "label": "Email placeholder",
+      "default": "Your email address"
+    },
+    {
+      "type": "text",
+      "id": "button",
+      "label": "Button label",
+      "default": "Join the family"
+    },
+    {
+      "type": "text",
+      "id": "dismiss",
+      "label": "Dismiss label",
+      "default": "Maybe later"
+    },
+    {
+      "type": "textarea",
+      "id": "success",
+      "label": "Success message",
+      "default": "Thank you for joining the Bloomere family! Check your inbox for the next steps.",
+      "info": "If you promise a discount, set up the discount and welcome email separately in Shopify."
+    },
+    {
+      "type": "richtext",
+      "id": "consent",
+      "label": "Consent text",
+      "default": "<p>By signing up, you agree to receive emails from Bloomere about new prints, gentle news and special offers. Unsubscribe anytime.</p>"
+    },
+    {
+      "type": "header",
+      "content": "Colors"
+    },
+    {
+      "type": "select",
+      "id": "palette",
+      "label": "Color palette",
+      "default": "palette--light bg--neutral",
+      "options": [
+        {
+          "value": "palette--light bg--neutral",
+          "label": "Default"
+        },
+        {
+          "value": "palette--light bg--accent",
+          "label": "Light"
+        },
+        {
+          "value": "palette--dark bg--invert",
+          "label": "Dark"
+        },
+        {
+          "value": "palette--dark bg--invert--accent",
+          "label": "Dark accent"
+        },
+        {
+          "value": "palette--bright bg--bright",
+          "label": "Bright"
+        },
+        {
+          "value": "palette--bright bg--bright--accent",
+          "label": "Bright accent"
+        }
+      ]
+    },
+    {
+      "type": "select",
+      "id": "kicker_color",
+      "label": "Kicker color",
+      "default": "text--primary",
+      "options": [
+        {
+          "value": "text--neutral",
+          "label": "Text color"
+        },
+        {
+          "value": "text--primary",
+          "label": "Primary accent"
+        },
+        {
+          "value": "text--secondary",
+          "label": "Secondary accent"
+        }
+      ]
+    },
+    {
+      "type": "select",
+      "id": "button_color",
+      "label": "Color",
+      "default": "btn--primary",
+      "options": [
+        {
+          "value": "btn--primary",
+          "label": "Bright accent"
+        },
+        {
+          "value": "btn--secondary",
+          "label": "Secondary accent"
+        },
+        {
+          "value": "btn--neutral",
+          "label": "Text color"
+        },
+        {
+          "value": "btn--black",
+          "label": "Black"
+        },
+        {
+          "value": "btn--white",
+          "label": "White"
+        }
+      ]
+    },
+    {
+      "type": "header",
+      "content": "Display"
+    },
+    {
+      "type": "range",
+      "id": "delay",
+      "label": "Show after",
+      "min": 0,
+      "max": 60,
+      "step": 1,
+      "unit": "sec",
+      "default": 8
+    },
+    {
+      "type": "select",
+      "id": "frequency",
+      "label": "Show again after dismissal",
+      "default": "7",
+      "options": [
+        {
+          "value": "1",
+          "label": "1 day"
+        },
+        {
+          "value": "7",
+          "label": "7 days"
+        },
+        {
+          "value": "30",
+          "label": "30 days"
+        }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "content": "Known newsletter subscribers are excluded. In the theme editor, select this section to preview it without changing display frequency."
+    }
+  ],
+  "presets": [
+    {
+      "name": "Bloomere newsletter popup"
+    }
+  ]
+}
+{% endschema %}
