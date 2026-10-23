@@ -1,0 +1,90 @@
+bloomere-testimonials.bt { display:block; position:relative; background:var(--bg); color:var(--text); }
+.bt, .bt * { box-sizing:border-box; }
+.bt [hidden] { display:none !important; }
+.bt__slide { display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); grid-template-areas:"copy media"; }
+.bt__slide--image-left { grid-template-areas:"media copy"; }
+.bt__copy { background:var(--bg); color:var(--text); grid-area:copy; display:flex; flex-direction:column; justify-content:center; padding:clamp(40px,5vw,96px) clamp(48px,6.5vw,120px); min-width:0; }
+.bt__slide--image-left .bt__copy { padding-bottom:max(80px,5vw); }
+.bt__stars { font-size:16px; line-height:1; letter-spacing:1px; margin-bottom:24px; }
+.bt__quote { margin:0; padding:0; border:0; color:inherit; font-family:var(--FONT-STACK-BODY, sans-serif); font-weight:var(--FONT-WEIGHT-BODY, 400); font-style:var(--FONT-STYLE-BODY, normal); overflow-wrap:anywhere; }
+/* Keep testimonial content centered and comfortably separated from the image. */
+.bt .bt__copy > * { width:100%; max-width:480px; margin-inline:auto; }
+.bt__quote p { margin:0 0 .5em; }
+.bt__name { margin:24px 0 0; text-align:right; font-family:var(--FONT-STACK-BODY, sans-serif); font-size:13px; letter-spacing:.14em; text-transform:uppercase; overflow-wrap:anywhere; }
+.bt__product { display:flex; align-items:center; gap:clamp(16px,2vw,36px); margin-top:48px; color:inherit; text-decoration:none; }
+.bt__product-thumbnail { display:block; width:clamp(72px,10vw,180px); aspect-ratio:1; border-radius:50%; overflow:hidden; background:var(--bg); flex-shrink:0; }
+.bt__product-image { display:block; width:100%; height:100%; object-fit:contain; transition:transform 250ms ease; }
+.bt__product-copy { font-family:var(--FONT-STACK-BODY, sans-serif); font-weight:var(--FONT-WEIGHT-BODY, 400); font-style:normal; overflow-wrap:anywhere; }
+.bt__product-label { display:block; }
+.bt__product-title { display:inline-block; position:relative; font-style:normal; text-decoration:none; }
+/* Match Pipeline's text-link underline timing and directional reveal. */
+a.bt__product .bt__product-title::after {
+  content:""; position:absolute; left:0; bottom:-3px; width:100%; height:1px;
+  background:currentColor; opacity:.25; transform:scaleX(0); transform-origin:100% 50%;
+  transition:transform .2s ease, opacity .4s cubic-bezier(.215,.61,.355,1);
+}
+@media (-webkit-min-device-pixel-ratio:2), (min-resolution:2dppx) {
+  a.bt__product .bt__product-title::after { height:.5px; }
+}
+[dir=rtl] a.bt__product .bt__product-title::after { transform-origin:0 50%; }
+@media (hover:hover) {
+  a.bt__product:hover .bt__product-title::after { transform:scaleX(1); transform-origin:0 50%; opacity:1; }
+  [dir=rtl] a.bt__product:hover .bt__product-title::after { transform-origin:100% 50%; }
+}
+a.bt__product:focus-visible .bt__product-title::after { transform:scaleX(1); transform-origin:0 50%; opacity:1; }
+[dir=rtl] a.bt__product:focus-visible .bt__product-title::after { transform-origin:100% 50%; }
+@media (prefers-reduced-motion:reduce) {
+  a.bt__product .bt__product-title::after { transition:none; }
+}
+@media (hover:hover) and (prefers-reduced-motion:no-preference) {
+  .bt__product:hover .bt__product-image { transform:scale(1.05); }
+}
+@media (prefers-reduced-motion:no-preference) {
+  .bt__product:focus-visible .bt__product-image { transform:scale(1.05); }
+}
+@media (prefers-reduced-motion:reduce) {
+  .bt__product-image { transition:none; }
+}
+.bt__media { grid-area:media; min-width:0; position:relative; min-height:var(--bt-height); }
+.bt__image, .bt__placeholder { display:block; width:100%; height:100%; position:absolute; inset:0; object-fit:cover; }
+.bt__placeholder { background:var(--bg); fill:var(--text); }
+.bt__navigation { position:absolute; inset:0; pointer-events:none; z-index:5; }
+.bt__navigation button { pointer-events:auto; }
+.bt__button { display:inline-flex; align-items:center; justify-content:center; width:44px; height:44px; padding:10px; border:0; border-radius:50%; background:var(--bg); color:var(--text); cursor:pointer; }
+.bt__button svg { width:22px; height:22px; }
+/* Match the hero slideshow's native Pipeline badge dots. */
+.bt .bt__navigation .flickity-page-dots { bottom:var(--outer,20px); right:var(--outer,20px); z-index:5; max-width:calc(100% - 40px); flex-wrap:wrap; }
+.bt .bt__navigation .flickity-page-dots::before { content:""; position:absolute; inset:0; background:var(--text); opacity:.5; z-index:0; }
+.bt .bt__navigation .flickity-page-dot { border:0; }
+.bt .bt__navigation .flickity-page-dot:focus-visible { outline:2px solid var(--bg); outline-offset:4px; }
+.bt__rotation { position:relative; z-index:5; border:0; background:transparent; color:var(--bg); font-size:14px; line-height:1; padding:0 8px; min-height:20px; cursor:pointer; }
+.bt__previous, .bt__next { position:absolute; top:50%; transform:translateY(-50%); }
+.bt__previous { left:12px; }
+.bt__next { right:12px; }
+.bt button:focus-visible, .bt a:focus-visible { outline:2px solid currentColor; outline-offset:4px; }
+.bt__sr { position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0; }
+@media (max-width:749px) {
+  .bt__slide { grid-template-columns:minmax(0,1fr); grid-template-areas:"copy" "media"; }
+  .bt__copy { padding:44px 32px; }
+  .bt__media { min-height:0; aspect-ratio:4 / 5; }
+  .bt__product { margin-top:32px; }
+  .bt__stars { margin-bottom:20px; font-size:16px; }
+  .bt__previous, .bt__next { top:auto; bottom:calc(62.5vw - 22px); transform:none; }
+}
+
+@media (min-width:750px) {
+  .bt--image-height .bt__media { display:grid; }
+  .bt--image-height .bt__media::before { content:""; grid-area:1 / 1; width:100%; padding-top:calc(100% / var(--bt-image-ratio,1.5)); }
+}
+
+/* Pipeline's native Flickity Fade lays out each slide at full width. */
+.bt .bt__slides.flickity-enabled .bt__slide { width:100%; }
+@media (prefers-reduced-motion:reduce) {
+  .bt .bt__slides .flickity-viewport { transition:none; }
+}
+
+/* Keep a standard cursor over slides; navigation controls retain their pointer. */
+.bt .bt__slides.flickity-enabled.is-draggable .flickity-viewport,
+.bt .bt__slides.flickity-enabled.is-draggable .flickity-viewport.is-pointer-down {
+  cursor:auto;
+}

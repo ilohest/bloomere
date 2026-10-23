@@ -1,0 +1,26 @@
+/* A decorative sibling of the image/video, so parallax clipping stays intact. */
+.bloomere-double .bloomere-double__badged-media { overflow:visible; }
+.bloomere-double .bloomere-brand-badge {
+  position:absolute;
+  bottom:calc(-1 * var(--bb-width,100px) * var(--bb-overlap,.2));
+  width:min(var(--bb-width,100px),35%);
+  z-index:6;
+  pointer-events:none;
+  user-select:none;
+}
+.bloomere-double .bloomere-brand-badge--start {
+  inset-inline-start:calc(-1 * min(var(--bb-width,100px) * var(--bb-overlap,.2),var(--outer,20px)));
+}
+.bloomere-double .bloomere-brand-badge--end {
+  inset-inline-end:calc(-1 * min(var(--bb-width,100px) * var(--bb-overlap,.2),var(--outer,20px)));
+}
+.bloomere-double .bloomere-brand-badge img { display:block; width:100%; height:auto; }
+/* Keep full-bleed sections within the viewport. */
+.bloomere-double--full .bloomere-brand-badge--start { inset-inline-start:8px; }
+.bloomere-double--full .bloomere-brand-badge--end { inset-inline-end:8px; }
+@media (max-width:767px) {
+  .bloomere-double .bloomere-brand-badge { width:min(var(--bb-mobile-width,70px),25%); bottom:8px; }
+  .bloomere-double .bloomere-brand-badge--start { inset-inline-start:8px; }
+  .bloomere-double .bloomere-brand-badge--end { inset-inline-end:8px; }
+  .bloomere-double .bloomere-brand-badge--hide-mobile { display:none; }
+}

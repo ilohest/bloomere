@@ -80,6 +80,7 @@
   {% render 'css-variables' %}
 
   {{ 'theme.css' | asset_url | stylesheet_tag: preload: true }}
+  {{ 'bloomere-buttons.css' | asset_url | stylesheet_tag }}
 
   <!-- custom start: fonts -->
   {% render 'custom-fonts' %}

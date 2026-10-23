@@ -14,9 +14,9 @@ dialog.bnp { padding:0; border:1px solid var(--border); width:min(490px,calc(100
 .bnp__art img { display:block; width:100%; height:auto; max-height:150px; object-fit:contain; }
 .bnp__signup { margin-top:14px; }
 .bnp__form { margin:0; }
-.bnp .bnp__email { width:100%; height:auto; min-height:50px; padding:14px 16px; margin:0 0 10px; border:1px solid var(--border); border-radius:0; background:var(--bg-accent); color:var(--text); font:inherit; font-size:16px; box-shadow:none; }
-.bnp .bnp__submit { display:block; width:100%; min-height:50px; border-radius:0; padding:14px 18px; font:inherit; font-size:12px; letter-spacing:.16em; text-transform:uppercase; cursor:pointer; }
-.bnp__submit:hover { filter:brightness(.94); }
+.bnp .bnp__email { width:100%; height:auto; min-height:50px; padding:14px 22px; margin:0 0 10px; border:1px solid var(--border); border-radius:999px; background:var(--bg-accent); color:var(--text); font:inherit; font-size:16px; box-shadow:none; }
+/* Inherit the shared button style; only control popup placement here. */
+.bnp .bnp__submit { display:flex; align-items:center; justify-content:center; width:fit-content; max-width:100%; margin-inline:auto; cursor:pointer; }
 .bnp .bnp__later { display:inline-block; padding:10px; margin:5px 0 0; min-height:44px; border:0; background:transparent; color:inherit; font:inherit; font-size:13px; text-decoration:underline; text-underline-offset:3px; cursor:pointer; }
 .bnp__consent { font-size:11px; line-height:1.6; opacity:.85; }
 .bnp__consent p { display:inline; margin:0; }

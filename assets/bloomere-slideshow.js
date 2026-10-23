@@ -1,4 +1,4 @@
-/* Independent of Pipeline/Flickity. Optional autoplay with pause, focus and reduced-motion handling. */
+/* Pipeline fade with optional autoplay, pause, focus and reduced-motion handling. */
 (() => {
   if (customElements.get('bloomere-hero')) return;
   class BloomereHero extends HTMLElement {
@@ -47,7 +47,7 @@
       // Native vertical scrolling is preserved. Only deliberate horizontal gestures navigate.
       this.addEventListener('touchstart', event => {
         this.start = null;
-        if (event.touches.length !== 1 || event.target.closest('a,button,input,textarea,select')) return;
+        if (this.flkty || event.touches.length !== 1 || event.target.closest('a,button,input,textarea,select')) return;
         this.start = { x: event.touches[0].clientX, y: event.touches[0].clientY };
       }, { ...options, passive: true });
       this.addEventListener('touchend', event => {
@@ -62,6 +62,27 @@
         const index = this.slides.findIndex(slide => slide.dataset.blockId === event.detail?.blockId);
         if (index >= 0) { this.paused = true; this.show(index); }
       }, options);
+      // Use Pipeline's own fade engine; keep our controls and autoplay handling.
+      const Fade = window.themeVendor?.FlickityFade;
+      const surface = this.querySelector('.bh__slides');
+      if (Fade && surface && this.slides.length > 1) {
+        this.slides.forEach(slide => { slide.hidden = false; });
+        this.flkty = new Fade(surface, {
+          cellSelector: '[data-bh-slide]',
+          autoPlay: false,
+          contain: false,
+          pageDots: false,
+          adaptiveHeight: true,
+          accessibility: false,
+          wrapAround: this.slides.length !== 2,
+          prevNextButtons: false,
+          draggable: true,
+          fade: true,
+          rightToLeft: document.documentElement.dir === 'rtl'
+        });
+        this.flkty.on('change', index => this.show(index));
+        this.flkty.on('dragStart', () => { this.paused = true; this.schedule(); });
+      }
       this.setupArrowNavigation(options);
       this.show(0);
     }
@@ -102,7 +123,13 @@
       if (!this.slides?.length) return;
       if (announce) this.paused = true;
       this.index = (index + this.slides.length) % this.slides.length;
-      this.slides.forEach((slide, i) => { slide.hidden = i !== this.index; });
+      if (this.flkty) this.flkty.select(this.index, false, this.motion.matches);
+      this.slides.forEach((slide, i) => {
+        const inactive = i !== this.index;
+        slide.hidden = !this.flkty && inactive;
+        slide.inert = inactive;
+        slide.setAttribute('aria-hidden', String(inactive));
+      });
       this.dots.forEach((dot, i) => {
         dot.classList.toggle('is-selected', i === this.index);
         if (i === this.index) dot.setAttribute('aria-current', 'true');
@@ -123,6 +150,12 @@
       this.timer = setTimeout(() => this.show(this.index + 1), this.interval);
     }
     disconnectedCallback() {
+      this.flkty?.destroy();
+      this.flkty = null;
+      this.slides?.forEach(slide => {
+        slide.inert = false;
+        slide.removeAttribute('aria-hidden');
+      });
       clearTimeout(this.timer);
       this.controller?.abort();
       this.controller = null;

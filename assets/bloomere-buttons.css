@@ -1,0 +1,62 @@
+/* Global capsule styling for Pipeline action buttons.
+   Colors and filled/soft/outline variants remain controlled by the theme.
+   Repeated classes let these rules override section CSS loaded later. */
+html body :is(.btn.btn, .btn--soft.btn--soft, .btn--outline.btn--outline) {
+  border-radius:999px;
+  border-width:1px;
+  border-style:solid;
+  border-color:currentColor;
+  min-height:48px;
+  max-width:100%;
+  padding:14px 32px;
+  font-family:var(--TYPE-STACK-BUTTON, var(--FONT-STACK-BODY, sans-serif));
+  font-style:var(--TYPE-STYLE-BUTTON, normal);
+  font-weight:var(--TYPE-WEIGHT-BUTTON, 400);
+  text-transform:uppercase;
+  letter-spacing:.18em;
+  line-height:1.4;
+  white-space:normal;
+  overflow-wrap:anywhere;
+  text-align:center;
+  transition:background-color .5s cubic-bezier(.215,.61,.355,1);
+}
+
+/* Keep the theme's decorative hover layers inside the capsule shape. */
+html body :is(.btn.btn, .btn--soft.btn--soft, .btn--outline.btn--outline)::before,
+html body :is(.btn.btn, .btn--soft.btn--soft, .btn--outline.btn--outline)::after {
+  border-radius:inherit;
+}
+
+html body :is(.btn.btn, .btn--soft.btn--soft, .btn--outline.btn--outline):focus-visible {
+  outline:2px solid currentColor;
+  outline-offset:4px;
+}
+
+@media (max-width:749px) {
+  html body :is(.btn.btn, .btn--soft.btn--soft, .btn--outline.btn--outline) {
+    padding:12px 24px;
+    letter-spacing:.14em;
+  }
+}
+
+@media (prefers-reduced-motion:reduce) {
+  html body :is(.btn.btn, .btn--soft.btn--soft, .btn--outline.btn--outline) {
+    transition:none;
+  }
+}
+
+/* Compact buttons embedded in a theme input group (newsletter forms).
+   Keep their intrinsic text width instead of wrapping inside the 1% table cell. */
+html body .input-group .input-group-button :is(.btn.btn, .btn--soft.btn--soft, .btn--outline.btn--outline) {
+  box-sizing:border-box;
+  width:auto;
+  max-width:none;
+  min-height:37px;
+  height:auto;
+  padding:8px 18px;
+  white-space:nowrap;
+  overflow-wrap:normal;
+  word-break:normal;
+  justify-content:center;
+  border-radius:999px;
+}

@@ -1,0 +1,61 @@
+/* Shared decorative illustration: subtle movement, no input interception. */
+.bloomere-illustration { width:100%; pointer-events:none; user-select:none; }
+.bloomere-illustration__image { display:block; width:100%; height:auto; object-fit:contain; }
+@media (prefers-reduced-motion:no-preference) {
+  .bloomere-illustration--animated .bloomere-illustration__image {
+    animation:bloomere-gentle-float var(--bi-duration,10s) ease-in-out infinite;
+  }
+}
+@keyframes bloomere-gentle-float {
+  0%, 100% { transform:translate3d(-3px,3px,0) rotate(-1deg); }
+  50% { transform:translate3d(3px,-5px,0) rotate(1deg); }
+}
+/* Decorative layer: never participates in the form's layout. */
+.section-contact:has(.bloomere-contact__layout) { position:relative; }
+.section-contact .bloomere-contact__layout { position:static; }
+.bloomere-contact__art {
+  position:absolute;
+  top:50%;
+  left:16px;
+  width:min(var(--bi-width,220px),20vw);
+  padding-block:12px;
+  transform:translateY(-50%);
+  pointer-events:none;
+  z-index:0;
+}
+.bloomere-contact__layout--right .bloomere-contact__art { left:auto; right:16px; }
+.bloomere-contact__layout .bloomere-contact__form { position:relative; z-index:1; }
+.bloomere-contact__layout:focus-within .bloomere-illustration__image { animation-play-state:paused; }
+@media (max-width:989px) {
+  .bloomere-contact__art {
+    width:min(var(--bi-mobile-width,100px),15vw);
+    left:4px;
+  }
+  .bloomere-contact__layout--right .bloomere-contact__art { left:auto; right:4px; }
+}
+
+/* Rich text: decoration sits outside the content flow, as in the contact section. */
+.bloomere-richtext--illustrated { position:relative; }
+.bloomere-richtext__art {
+  position:absolute;
+  top:50%;
+  left:16px;
+  width:min(var(--bi-width,220px),20vw);
+  padding-block:12px;
+  transform:translateY(-50%);
+  pointer-events:none;
+  z-index:0;
+}
+.bloomere-richtext__art--right { left:auto; right:16px; }
+.bloomere-richtext--illustrated .bloomere-richtext__content { position:relative; z-index:1; }
+.bloomere-richtext--illustrated:focus-within .bloomere-illustration__image { animation-play-state:paused; }
+@media (max-width:989px) {
+  .bloomere-richtext__art { width:min(var(--bi-mobile-width,100px),15vw); left:4px; }
+  .bloomere-richtext__art--right { left:auto; right:4px; }
+}
+
+/* Hide decorative illustrations on mobile in both sections. */
+@media (max-width:749px) {
+  .section-contact .bloomere-contact__art,
+  .bloomere-richtext--illustrated .bloomere-richtext__art { display:none; }
+}

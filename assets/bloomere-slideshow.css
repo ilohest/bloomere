@@ -47,6 +47,37 @@ bloomere-hero.bc { position:relative; }
 
 /* Directional mouse cursors; links and controls retain their normal behavior. */
 @media (hover: hover) and (pointer: fine) {
-  .bc .bh__slides[data-arrow="previous"] { cursor:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2230%22%20height%3D%2236%22%20viewBox%3D%220%200%2044%2044%22%3E%3Cpath%20d%3D%22M10.366%2022.502l.412.392L33.268%2044l.732-.742-22.488-21.106L34%20.742%2033.268%200%2010%2022.152z%22%2F%3E%3C%2Fsvg%3E") 5 11, auto; }
-  .bc .bh__slides[data-arrow="next"] { cursor:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2230%22%20height%3D%2236%22%20viewBox%3D%220%200%2044%2044%22%3E%3Cpath%20d%3D%22M33.634%2022.502l-.412.392L10.732%2044%2010%2043.258l22.488-21.106L10%20.742%2010.732%200%2034%2022.152z%22%2F%3E%3C%2Fsvg%3E") 15 11, auto; }
+  .bc .bh__slides[data-arrow="previous"] { cursor:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2230%22%20height%3D%2236%22%20viewBox%3D%220%200%2044%2044%22%3E%3Cpath%20d%3D%22M33%201.5%2011%2022%2033%2042.5%22%20fill%3D%22none%22%20stroke%3D%22%23fff%22%20stroke-width%3D%222.2%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%2F%3E%3C%2Fsvg%3E") 5 11, auto; }
+  .bc .bh__slides[data-arrow="next"] { cursor:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2230%22%20height%3D%2236%22%20viewBox%3D%220%200%2044%2044%22%3E%3Cpath%20d%3D%22M11%201.5%2033%2022%2011%2042.5%22%20fill%3D%22none%22%20stroke%3D%22%23fff%22%20stroke-width%3D%222.2%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%2F%3E%3C%2Fsvg%3E") 15 11, auto; }
+}
+
+/* Flickity's viewport must inherit the directional cursor from the slide surface. */
+@media (hover: hover) and (pointer: fine) {
+  .bc .bh__slides[data-arrow].flickity-enabled.is-draggable .flickity-viewport,
+  .bc .bh__slides[data-arrow].flickity-enabled.is-draggable .flickity-viewport.is-pointer-down {
+    cursor:inherit;
+  }
+}
+
+/* Optional custom divider, shared by all slides. */
+.bc--divider { --bc-divider-height:var(--bc-divider-desktop,64px); }
+.bc .bc__divider { position:absolute; inset:auto 0 0; height:var(--bc-divider-height); color:var(--bc-divider-color); z-index:4; pointer-events:none; overflow:hidden; }
+.bc .bc__divider svg { display:block; width:100%; height:100%; }
+.bc .bc__divider .bc__divider-mobile { display:none; }
+.bc--divider .bh__content { padding-bottom:calc(56px + var(--bc-divider-height)); }
+.bc--divider:has(.bh__navigation) .bh__content { padding-bottom:calc(max(72px, var(--outer,20px)) + var(--bc-divider-height)); }
+.bc--divider .bh__navigation .flickity-page-dots { bottom:calc(var(--outer,20px) + var(--bc-divider-height)); }
+@media (max-width:749px) {
+  .bc--divider { --bc-divider-height:var(--bc-divider-mobile,32px); }
+  .bc .bc__divider .bc__divider-desktop { display:none; }
+  .bc .bc__divider .bc__divider-mobile { display:block; }
+  .bc--divider .bh__content { padding-bottom:36px; }
+  .bc--divider .bh__column:last-child .bh__content { padding-bottom:calc(36px + var(--bc-divider-height)); }
+  .bc--divider:has(.bh__navigation) .bh__column:last-child .bh__content { padding-bottom:calc(max(72px, var(--outer,20px)) + var(--bc-divider-height)); }
+}
+
+/* Pipeline's native Flickity Fade lays out each slide at full width. */
+.bc .bh__slides.flickity-enabled .bh__slide { width:100%; }
+@media (prefers-reduced-motion:reduce) {
+  .bc .bh__slides .flickity-viewport { transition:none; }
 }

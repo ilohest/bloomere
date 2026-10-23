@@ -1,4 +1,19 @@
 {%- liquid
+  assign divider_color = settings.color_body_bg
+  case section.settings.divider_palette
+    when 'neutral'
+      assign divider_color = settings.color_body_bg
+    when 'light'
+      assign divider_color = settings.color_bg_light
+    when 'dark'
+      assign divider_color = settings.color_bg_inverse
+    when 'dark_accent'
+      assign divider_color = settings.color_bg_accent_inverse
+    when 'bright'
+      assign divider_color = settings.color_bg_bright
+    when 'bright_accent'
+      assign divider_color = settings.color_bg_accent_bright
+  endcase
   assign hero_height = '66.67svh'
   case section.settings.section_height
     when 'use_screen_full'
@@ -21,10 +36,10 @@
       assign hero_height = 'auto'
   endcase
 -%}
-{{ 'bloomere-columns-slideshow.css' | asset_url | stylesheet_tag }}
-<script src="{{ 'bloomere-hero.js' | asset_url }}" defer></script>
-<bloomere-hero class="bh bc flickity-badge-dots{% if hero_height == 'auto' %} bc--image-height{% endif %}" data-autoplay="{{ section.settings.autoplay }}" data-interval="{{ section.settings.autoplay_speed | times: 1000 }}" data-editor="{{ request.design_mode }}" role="region" aria-roledescription="carousel" aria-label="Featured stories"
- style="--bh-height: {{ hero_height }}; --bh-mobile: {{ section.settings.mobile_height }}px;">
+{{ 'bloomere-slideshow.css' | asset_url | stylesheet_tag }}
+<script src="{{ 'bloomere-slideshow.js' | asset_url }}" defer></script>
+<bloomere-hero class="bh bc flickity-badge-dots{% if section.settings.divider_enabled %} bc--divider{% endif %}{% if hero_height == 'auto' %} bc--image-height{% endif %}" data-autoplay="{{ section.settings.autoplay }}" data-interval="{{ section.settings.autoplay_speed | times: 1000 }}" data-editor="{{ request.design_mode }}" role="region" aria-roledescription="carousel" aria-label="Featured stories"
+ style="--bh-height: {{ hero_height }}; --bh-mobile: {{ section.settings.mobile_height }}px; --bc-divider-color: {{ divider_color }}; --bc-divider-desktop: {{ section.settings.divider_height }}px; --bc-divider-mobile: {{ section.settings.divider_height_mobile }}px;">
   <div class="bh__slides">
   {% for block in section.blocks %}
     {%- liquid
@@ -132,6 +147,16 @@
     </nav>
     <p class="bh__sr" data-bh-status aria-live="polite" aria-atomic="true"></p>
   {% endif %}
+  {% if section.settings.divider_enabled %}
+    <div class="bc__divider" aria-hidden="true">
+      <svg class="bc__divider-desktop" viewBox="0 0 1440 100" preserveAspectRatio="none" focusable="false" xmlns="http://www.w3.org/2000/svg">
+        <path d="M0 60.8 Q24 59.5 36 59.83 Q48 60.15 58 57.23 Q68 54.3 81 52.67 Q94 51.05 106 49.1 Q118 47.15 130.5 46.5 Q143 45.85 155.5 47.48 Q168 49.1 180 47.8 Q192 46.5 204.5 47.48 Q217 48.45 229 46.83 Q241 45.2 253.5 45.53 Q266 45.85 277.5 44.23 Q289 42.6 301.5 43.58 Q314 44.55 326 43.25 Q338 41.95 350 42.92 Q362 43.9 375.5 45.2 Q389 46.5 401 45.85 Q413 45.2 426 46.17 Q439 47.15 451.5 46.5 Q464 45.85 475.5 47.48 Q487 49.1 498.5 50.4 Q510 51.7 522 53 Q534 54.3 546 53.33 Q558 52.35 569.5 53 Q581 53.65 592.5 52.02 Q604 50.4 616 49.42 Q628 48.45 639.5 46.83 Q651 45.2 663.5 43.9 Q676 42.6 688 42.92 Q700 43.25 711.5 41.3 Q723 39.35 735 39.03 Q747 38.7 758.5 36.42 Q770 34.15 782.5 32.85 Q795 31.55 807 29.6 Q819 27.65 831 27 Q843 26.35 855.5 24.73 Q868 23.1 880 23.42 Q892 23.75 904 22.45 Q916 21.15 928 21.48 Q940 21.8 952 20.82 Q964 19.85 976.5 20.17 Q989 20.5 1001 19.2 Q1013 17.9 1025 18.23 Q1037 18.55 1049.5 17.9 Q1062 17.25 1074 17.57 Q1086 17.9 1098 16.92 Q1110 15.95 1122 16.6 Q1134 17.25 1146 16.92 Q1158 16.6 1170.5 17.9 Q1183 19.2 1195 18.55 Q1207 17.9 1219 18.88 Q1231 19.85 1243 19.2 Q1255 18.55 1267.5 19.52 Q1280 20.5 1292 19.85 Q1304 19.2 1316 19.85 Q1328 20.5 1340 20.17 Q1352 19.85 1364 20.82 Q1376 21.8 1388 21.15 Q1400 20.5 1410 21.15 Q1420 21.8 1430 22.45 L1440 23.1 V100 H0 Z" fill="currentColor"/>
+      </svg>
+      <svg class="bc__divider-mobile" viewBox="0 0 480 100" preserveAspectRatio="none" focusable="false" xmlns="http://www.w3.org/2000/svg">
+        <path d="M0 52.35 Q20 51.05 29.5 48.77 Q39 46.5 48.5 47.48 Q58 48.45 67.5 46.83 Q77 45.2 86.5 46.17 Q96 47.15 105.5 48.45 Q115 49.75 124.5 49.1 Q134 48.45 143.5 50.4 Q153 52.35 162.5 53 Q172 53.65 181.5 52.35 Q191 51.05 200.5 48.77 Q210 46.5 219.5 45.85 Q229 45.2 238.5 42.28 Q248 39.35 257.5 37.4 Q267 35.45 276.5 32.85 Q286 30.25 295.5 29.27 Q305 28.3 314.5 26.02 Q324 23.75 333.5 24.73 Q343 25.7 352.5 23.75 Q362 21.8 371.5 22.77 Q381 23.75 390.5 22.45 Q400 21.15 409.5 22.77 Q419 24.4 428.5 23.42 Q438 22.45 448.5 24.07 Q459 25.7 469.5 25.05 L480 24.4 V100 H0 Z" fill="currentColor"/>
+      </svg>
+    </div>
+  {% endif %}
 </bloomere-hero>
 
 {% schema %}
@@ -140,6 +165,12 @@
   "tag": "section",
   "max_blocks": 8,
   "settings": [
+    {"type": "header", "content": "Custom divider"},
+    {"type": "checkbox", "id": "divider_enabled", "label": "Show bottom divider", "default": false},
+    {"type": "select", "id": "divider_palette", "label": "Divider palette", "options": [{"value": "neutral", "label": "Default"}, {"value": "light", "label": "Light"}, {"value": "dark", "label": "Dark"}, {"value": "dark_accent", "label": "Dark accent"}, {"value": "bright", "label": "Bright"}, {"value": "bright_accent", "label": "Bright accent"}], "default": "neutral", "info": "Match the background palette of the next section for a seamless transition."},
+    {"type": "range", "id": "divider_height", "label": "Desktop height", "min": 20, "max": 120, "step": 4, "unit": "px", "default": 64},
+    {"type": "range", "id": "divider_height_mobile", "label": "Mobile height", "min": 12, "max": 80, "step": 4, "unit": "px", "default": 32},
+
     {
       "type": "checkbox",
       "id": "autoplay",
@@ -293,7 +324,7 @@
           "type": "select",
           "id": "button_style",
           "label": "Button style",
-          "default": "btn--outline",
+          "default": "btn",
           "options": [
             {
               "value": "btn",

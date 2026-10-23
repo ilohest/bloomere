@@ -1,0 +1,9 @@
+{%- comment -%}
+  Reusable decorative illustration. Load bloomere-illustration.css in the host section.
+  Parameters: image, animate, duration. Size comes from --bi-width / --bi-mobile-width.
+{%- endcomment -%}
+{%- if image != blank -%}
+  <div class="bloomere-illustration{% if animate %} bloomere-illustration--animated{% endif %}" aria-hidden="true" style="--bi-duration:{{ duration | default: 10 }}s;">
+    {{ image | image_url: width: 900 | image_tag: class: 'bloomere-illustration__image', widths: '100, 180, 220, 360, 540, 720, 900', sizes: '(max-width: 989px) 180px, 360px', loading: 'lazy', alt: '' }}
+  </div>
+{%- endif -%}

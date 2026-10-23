@@ -1,0 +1,367 @@
+{%- liquid
+  assign testimonial_height = '66.67svh'
+  case section.settings.section_height
+    when 'use_screen_full'
+      assign testimonial_height = '100svh'
+    when 'use_screen_three_quarters'
+      assign testimonial_height = '75svh'
+    when 'use_screen_one_half'
+      assign testimonial_height = '50svh'
+    when 'use_screen_one_third'
+      assign testimonial_height = '33.33svh'
+    when 'use_screen_one_fifth'
+      assign testimonial_height = '20svh'
+    when 'use_pixels_800'
+      assign testimonial_height = '800px'
+    when 'use_pixels_650'
+      assign testimonial_height = '650px'
+    when 'use_pixels_500'
+      assign testimonial_height = '500px'
+    when 'use_image'
+      assign testimonial_height = 'auto'
+  endcase
+-%}
+{{ 'bloomere-testimonials.css' | asset_url | stylesheet_tag }}
+<script src="{{ 'bloomere-testimonials.js' | asset_url }}" defer></script>
+<bloomere-testimonials class="bt{% if testimonial_height == 'auto' %} bt--image-height{% endif %} flickity-badge-dots palette--light bg--neutral" role="region" aria-roledescription="carousel" aria-label="Customer testimonials"
+  data-autoplay="{{ section.settings.autoplay }}" data-interval="{{ section.settings.autoplay_speed | times: 1000 }}" data-editor="{{ request.design_mode }}"
+  style="--bt-height:{{ testimonial_height }};">
+  <div class="bt__slides">
+  {% for block in section.blocks %}
+    {% liquid
+      assign product = block.settings.product
+      assign product_image = block.settings.product_image | default: product.featured_image
+      assign product_title = block.settings.product_title | default: product.title
+      assign photo = block.settings.image
+      assign photo_alt = photo.alt | default: block.settings.customer_name
+    %}
+    <article id="bt-{{ section.id }}-{{ block.id }}" class="bt__slide{% if block.settings.image_position == 'left' %} bt__slide--image-left{% endif %}" data-bt-slide data-block-id="{{ block.id }}" role="group" aria-roledescription="slide" aria-label="{{ forloop.index }} / {{ section.blocks.size }}" {{ block.shopify_attributes }}>
+      <div class="bt__copy {% if block.settings.copy_palette == 'inherit' or block.settings.copy_palette == blank %}palette--light bg--neutral{% else %}{{ block.settings.copy_palette }}{% endif %}">
+        {% if block.settings.rating > 0 %}
+          <div class="bt__stars" role="img" aria-label="{{ block.settings.rating }} / 5">
+            <span aria-hidden="true">{% for star in (1..block.settings.rating) %}★{% endfor %}</span>
+          </div>
+        {% endif %}
+        <blockquote class="bt__quote rte body-size-4">{{ block.settings.quote }}</blockquote>
+        {% if block.settings.customer_name != blank %}
+          <p class="bt__name">— {{ block.settings.customer_name | escape }}</p>
+        {% endif %}
+        {% if product_title != blank or product_image != blank %}
+          {% if product != blank %}<a class="bt__product" href="{{ product.url }}">{% else %}<div class="bt__product">{% endif %}
+            {% if product_image != blank %}
+              <span class="bt__product-thumbnail {{ section.settings.product_palette }}">
+              {{ product_image | image_url: width: 400 | image_tag: class: 'bt__product-image', loading: 'lazy', widths: '100, 200, 400', sizes: '(max-width: 749px) 75px, 180px', alt: '' }}
+              </span>
+            {% endif %}
+            <span class="bt__product-copy body-size-4">
+              {% if section.settings.product_label != blank %}<span class="bt__product-label">{{ section.settings.product_label | escape }}</span>{% endif %}
+              <span class="bt__product-title">{{ product_title | escape }}</span>
+            </span>
+          {% if product != blank %}</a>{% else %}</div>{% endif %}
+        {% endif %}
+      </div>
+      <div class="bt__media" style="--bt-image-ratio:{{ photo.aspect_ratio | default: 1.5 }};">
+        {% if photo != blank %}
+          {{ photo | image_url: width: 2000 | image_tag: class: 'bt__image', loading: 'lazy', widths: '400, 600, 800, 1000, 1400, 2000', sizes: '(min-width: 750px) 50vw, 100vw', alt: photo_alt }}
+        {% else %}
+          {{ 'lifestyle-1' | placeholder_svg_tag: 'bt__placeholder' }}
+        {% endif %}
+      </div>
+    </article>
+  {% endfor %}
+  </div>
+  <div class="bt__navigation" data-bt-nav hidden>
+    <button class="bt__button bt__previous {{ section.settings.arrow_palette }}" type="button" data-bt-prev aria-label="Previous testimonial">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="m15 4-8 8 8 8"/></svg>
+    </button>
+    <button class="bt__button bt__next {{ section.settings.arrow_palette }}" type="button" data-bt-next aria-label="Next testimonial">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="m9 4 8 8-8 8"/></svg>
+    </button>
+    <div class="flickity-page-dots">
+    {% if section.settings.autoplay %}
+      <button class="bt__rotation" type="button" data-bt-toggle data-play-label="Play testimonials" data-pause-label="Pause testimonials" aria-label="Pause testimonials">
+        <span data-bt-play aria-hidden="true" hidden>▶</span><span data-bt-pause aria-hidden="true">Ⅱ</span>
+      </button>
+    {% endif %}
+    {% for block in section.blocks %}
+      <button class="flickity-page-dot{% if forloop.first %} is-selected{% endif %}" type="button" data-bt-go="{{ forloop.index0 }}" aria-controls="bt-{{ section.id }}-{{ block.id }}" aria-label="Show testimonial {{ forloop.index }}"{% if forloop.first %} aria-current="true"{% endif %}></button>
+    {% endfor %}
+    </div>
+  </div>
+  <span class="bt__sr" data-bt-status role="status" aria-live="polite" aria-atomic="true"></span>
+</bloomere-testimonials>
+{% schema %}
+{
+  "name": "Bloomere testimonials",
+  "tag": "section",
+  "class": "section-bloomere-testimonials",
+  "max_blocks": 12,
+  "disabled_on": {
+    "groups": [
+      "header",
+      "footer"
+    ]
+  },
+  "settings": [
+    {
+      "type": "paragraph",
+      "content": "Curated testimonials entered manually. This section does not collect or import customer reviews."
+    },
+    {
+      "type": "checkbox",
+      "id": "autoplay",
+      "label": "Auto-play slides",
+      "default": true
+    },
+    {
+      "type": "range",
+      "id": "autoplay_speed",
+      "label": "Time between slides",
+      "min": 3,
+      "max": 15,
+      "step": 1,
+      "unit": "s",
+      "default": 7
+    },
+    {
+      "type": "select",
+      "id": "section_height",
+      "label": "Section height",
+      "default": "use_screen_two_thirds",
+      "options": [
+        {
+          "value": "use_screen_full",
+          "label": "Full screen height"
+        },
+        {
+          "value": "use_screen_three_quarters",
+          "label": "Three quarters of screen height"
+        },
+        {
+          "value": "use_screen_two_thirds",
+          "label": "Two thirds of screen height"
+        },
+        {
+          "value": "use_screen_one_half",
+          "label": "One half of screen height"
+        },
+        {
+          "value": "use_screen_one_third",
+          "label": "One third of screen height"
+        },
+        {
+          "value": "use_screen_one_fifth",
+          "label": "One fifth of screen height"
+        },
+        {
+          "value": "use_pixels_800",
+          "label": "800px"
+        },
+        {
+          "value": "use_pixels_650",
+          "label": "650px"
+        },
+        {
+          "value": "use_pixels_500",
+          "label": "500px"
+        },
+        {
+          "value": "use_image",
+          "label": "Image height"
+        }
+      ],
+      "info": "Desktop height. The section expands when the testimonial needs more space. On mobile, images keep a 4:5 ratio."
+    },
+    {
+      "type": "text",
+      "id": "product_label",
+      "label": "Product introduction",
+      "default": "Purchased the"
+    },
+    {
+      "type": "header",
+      "content": "Colors"
+    },
+    {
+      "type": "select",
+      "id": "arrow_palette",
+      "label": "Arrow palette",
+      "options": [
+        {
+          "value": "palette--light bg--neutral",
+          "label": "Default"
+        },
+        {
+          "value": "palette--light bg--accent",
+          "label": "Light"
+        },
+        {
+          "value": "palette--dark bg--invert",
+          "label": "Dark"
+        },
+        {
+          "value": "palette--dark bg--invert--accent",
+          "label": "Dark accent"
+        },
+        {
+          "value": "palette--bright bg--bright",
+          "label": "Bright"
+        },
+        {
+          "value": "palette--bright bg--bright--accent",
+          "label": "Bright accent"
+        }
+      ],
+      "default": "palette--light bg--accent"
+    },
+    {
+      "type": "select",
+      "id": "product_palette",
+      "label": "Product image palette",
+      "options": [
+        {
+          "value": "palette--light bg--neutral",
+          "label": "Default"
+        },
+        {
+          "value": "palette--light bg--accent",
+          "label": "Light"
+        },
+        {
+          "value": "palette--dark bg--invert",
+          "label": "Dark"
+        },
+        {
+          "value": "palette--dark bg--invert--accent",
+          "label": "Dark accent"
+        },
+        {
+          "value": "palette--bright bg--bright",
+          "label": "Bright"
+        },
+        {
+          "value": "palette--bright bg--bright--accent",
+          "label": "Bright accent"
+        }
+      ],
+      "default": "palette--light bg--accent"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "testimonial",
+      "name": "Testimonial",
+      "settings": [
+        {
+          "type": "select",
+          "id": "copy_palette",
+          "label": "Testimonial column palette",
+          "default": "palette--light bg--neutral",
+          "options": [
+            {
+              "value": "palette--light bg--neutral",
+              "label": "Default"
+            },
+            {
+              "value": "palette--light bg--accent",
+              "label": "Light"
+            },
+            {
+              "value": "palette--dark bg--invert",
+              "label": "Dark"
+            },
+            {
+              "value": "palette--dark bg--invert--accent",
+              "label": "Dark accent"
+            },
+            {
+              "value": "palette--bright bg--bright",
+              "label": "Bright"
+            },
+            {
+              "value": "palette--bright bg--bright--accent",
+              "label": "Bright accent"
+            }
+          ]
+        },
+        {
+          "type": "richtext",
+          "id": "quote",
+          "label": "Testimonial text",
+          "default": "<p>Add a customer testimonial here.</p>"
+        },
+        {
+          "type": "text",
+          "id": "customer_name",
+          "label": "Customer name",
+          "default": "Customer name"
+        },
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Customer or lifestyle image"
+        },
+        {
+          "type": "select",
+          "id": "image_position",
+          "label": "Image position",
+          "info": "On mobile, the image appears below the testimonial.",
+          "default": "right",
+          "options": [
+            {
+              "value": "left",
+              "label": "Left"
+            },
+            {
+              "value": "right",
+              "label": "Right"
+            }
+          ]
+        },
+        {
+          "type": "range",
+          "id": "rating",
+          "label": "Star rating",
+          "info": "Set to 0 to hide. Only display a rating supplied by the customer.",
+          "min": 0,
+          "max": 5,
+          "step": 1,
+          "default": 0
+        },
+        {
+          "type": "header",
+          "content": "Optional purchased product"
+        },
+        {
+          "type": "product",
+          "id": "product",
+          "label": "Product"
+        },
+        {
+          "type": "image_picker",
+          "id": "product_image",
+          "label": "Custom product image"
+        },
+        {
+          "type": "text",
+          "id": "product_title",
+          "label": "Custom product title"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Bloomere testimonials",
+      "blocks": [
+        {
+          "type": "testimonial"
+        },
+        {
+          "type": "testimonial"
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

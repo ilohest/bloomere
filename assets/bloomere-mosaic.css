@@ -1,0 +1,44 @@
+/* Optional frames preserve Pipeline's grid and block destinations. */
+.section-mosaic .bm-framed { isolation:isolate; }
+.section-mosaic .bm-frame { position:absolute; inset:0; display:block; width:100%; height:100%; color:var(--bm-frame-color); pointer-events:none; z-index:1; }
+.section-mosaic .bm-framed .tile__image { inset:8%; width:84%; height:84%; }
+.section-mosaic .bm-framed--oval .tile__image { border-radius:50%; }
+/* Zooming the image container would otherwise cross the decorative frame. */
+.section-mosaic .bm-framed:hover .tile__image { transform:none; }
+.section-mosaic .bm-framed .tile__inner { position:relative; z-index:2; margin:8%; width:84%; padding:clamp(12px,3vw,36px); }
+.section-mosaic .bm-framed--oval .tile__inner { margin:16%; width:68%; padding:12px; }
+.section-mosaic .bm-has-badge:not(.tile--product) .tile__link { display:none; }
+.section-mosaic .bm-has-badge .tile__inner { padding-bottom:clamp(100px,12vw,170px); }
+.section-mosaic .bm-badge {
+  position:absolute; right:3%; bottom:3%; z-index:4;
+  display:flex; align-items:center; justify-content:center;
+  width:clamp(96px,12vw,168px); min-height:clamp(96px,12vw,168px);
+  aspect-ratio:1; padding:18px; border-radius:50%;
+  background:var(--bg); color:var(--text); text-align:center; text-decoration:none;
+  font-family:var(--FONT-STACK-BODY,sans-serif); font-size:clamp(11px,1vw,15px);
+  line-height:1.45; text-transform:uppercase; letter-spacing:.1em; overflow-wrap:anywhere;
+  border:1px solid currentColor;
+}
+.section-mosaic .bm-badge::before { content:""; position:absolute; inset:5px; border:1px solid currentColor; border-radius:inherit; pointer-events:none; }
+.section-mosaic .bm-badge::after { content:""; position:absolute; inset:10px; border:1px dashed currentColor; border-radius:inherit; pointer-events:none; }
+.section-mosaic .bm-badge span { position:relative; }
+.section-mosaic .bm-badge:focus-visible { outline:2px solid currentColor; outline-offset:4px; }
+@media (hover:hover) and (prefers-reduced-motion:no-preference) {
+  .section-mosaic .bm-badge { transition:transform .3s ease; }
+  .section-mosaic .bm-badge:hover { transform:rotate(-3deg); }
+}
+@media (max-width:749px) {
+  .section-mosaic .bm-badge { width:104px; min-height:104px; font-size:11px; padding:16px; }
+}
+
+/* ResizeObserver keeps scallops and punched dots circular on portrait frames. */
+bloomere-mosaic-frame { display:contents; }
+.section-mosaic .bm-framed--circle .tile__image { border-radius:50%; }
+.section-mosaic .bm-frame-sized .tile__image {
+  inset:auto;
+  left:var(--bm-image-left);
+  top:var(--bm-image-top);
+  width:var(--bm-image-width);
+  height:var(--bm-image-height);
+}
+.section-mosaic .bm-framed--circle .tile__inner { margin:16%; width:68%; padding:12px; }
